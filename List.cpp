@@ -6,10 +6,15 @@
 
 int main(){
     List<int> list1;
-    list1.addNode(1);
-    list1.addNode(2);
-    list1.addNode(3);
-    list1.deleteNode(2);
+    list1.addLast(1);
+    list1.addLast(2);
+    list1.addLast(3);
 
     List<int> list2;
+    list2.appendList(list1);
+
+    List<int> List3 = List<int>(list2);
+    Node<int>* potato = List3.addLast(3);
+    List3.deleteNode(potato);
+
 }

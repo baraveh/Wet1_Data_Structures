@@ -7,94 +7,104 @@
 
 #include <stdlib.h>
 
-template <typename T>
-struct Node{
+template<typename T>
+struct Node {
     T data_m;
-    Node* next_m;
+    Node *next_m;
+    Node * prev_m;
 };
 
-template <typename T>
+template<typename T>
 class List {
-   Node<T>* head_m, tail_m;
+    Node<T> *head_m;
+    Node<T> *tail_m;
+    int size;
 
 public:
 
-    List(){
+    List() {
         head_m = NULL;
         tail_m = NULL;
+        size = 0;
     }
 
-    List(const List& aList){
-        Node<T>* temp = aList.head_m;
-        while(temp!= NULL){
-            addNode(temp->data_m);
-            temp = temp->next_m;
+    List(const List &aList) {
+        head_m = NULL;
+        tail_m = NULL;
+        size = 0;
+        Node<T> *temp = aList.head_m;
+        do{
+            addLast(temp->data_m);
+            temp= temp->next_m;
+        } while(temp != aList.head_m);
+    }
+
+    ~List() {
+        while (size > 0) {
+           deleteNode(head_m);
         }
     }
 
-    ~List(){
-        while(head_m != NULL) {
-            T temp = tail_m.data_m;
-            deleteNode(temp);
+    List &operator=(const List &aList) {
+
+        while (head_m != NULL) {
+            deleteNode(head_m);
         }
+
+        Node<T> *temp = aList.head_m;
+        do{
+            addLast(temp->data_m);
+            temp= temp->next_m;
+        } while(temp != aList.head_m);
     }
 
-    void addNode(const T& value){ //adds node to the end
-        Node<T>* temp = new Node<T>;
+    Node<T> *
+    addLast(const T &value) { //adds node to the end, returns a pointer to it;
+        auto *temp = new Node<T>;
         temp->data_m = value;
         temp->next_m = NULL;
+        temp->prev_m = NULL;
 
-        if(head_m == NULL){
+        if (head_m == NULL) {
             head_m = temp;
             tail_m = temp;
-        }
-        else{
+            head_m->prev_m = tail_m;
+            head_m->next_m = tail_m;
+            tail_m->prev_m = head_m;
+            tail_m->next_m = head_m;
+        } else {
             tail_m->next_m = temp;
-            tail_m = tail_m->next_m;
+            head_m->prev_m = temp;
+            temp->prev_m = tail_m;
+            temp->next_m = head_m;
+            tail_m = temp;
         }
+        size++;
+        return temp;
     }
 
-    Node<T>*& getHead(){
-        return head_m;
+    
+    void deleteNode(const Node<T>* node){ //deletes a given node in the list
+       if(node != nullptr && size > 0) {
+           if(node == head_m){
+               head_m = node->next_m;
+           }
+           if(node == tail_m){
+               tail_m = node->prev_m;
+           }
+           node->prev_m->next_m = node->next_m;
+           node->next_m->prev_m = node->prev_m;
+           delete node;
+           size--;
+       }
     }
 
-    void deleteNode (const T& value){ //deletes a node if it exists
-        if(head_m == NULL){
-            return;
-        }
-
-        if(head_m->data_m == value){
-            Node<T>* temp = head_m;
-            head_m = temp->next_m;
-            delete temp;
-            return;
-        }
-
-        Node<T>* prev = head_m;
-        Node<T>* curr = head_m->next_m;
-        while(curr != NULL){
-            if(curr->data_m == value){
-
-                prev->next_m = curr->next_m;
-
-                if(curr == tail_m){
-                    tail_m = prev;
-                }
-
-                delete curr;
-                return;
-            }
-            prev = curr;
-            curr = prev->next_m;
-        }
-    }
-
-    void appendList (const List& aList){
-        Node<T>* temp = aList.head_m;
-        while(temp!= NULL){
-            addNode(temp->data_m);
-            temp = temp->next_m;
-        }
+    void appendList(const List &aList) {
+        Node<T> *temp = aList.head_m;
+        do{
+            addLast(temp->data_m);
+            temp= temp->next_m;
+        } while(temp != aList.head_m);
     }
 };
 
