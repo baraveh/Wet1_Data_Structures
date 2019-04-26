@@ -2,6 +2,7 @@
 // Created by Bar The magical on 25/04/2019.
 //
 
+#include <cassert>
 #include "List.h"
 
 int main(){
@@ -11,10 +12,14 @@ int main(){
     list1.addLast(3);
 
     List<int> list2;
+    assert(list2.isEmpty());
     list2.appendList(list1);
 
     List<int> List3 = List<int>(list2);
-    Node<int>* potato = List3.addLast(3);
+    Node<int>* potato = List3.addLast(4);
+    List3.moveNodeToStart(potato);
+    List3.moveNodeToEnd(potato);
     List3.deleteNode(potato);
+    assert(List3.getSize() == 3);
 
 }

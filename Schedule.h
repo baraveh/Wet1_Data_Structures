@@ -6,7 +6,9 @@
 #define WET1_SCHEDULE_H
 
 #include "AVL.h"
+#include "Lecture.h"
 #include "List.h"
+#include "Array.h"
 
 typedef enum {
     SCHEDULE_SUCCESS = 0,
@@ -17,78 +19,102 @@ typedef enum {
 class Schedule {
 private:
 
-    struct Lesson {
-        int courseId;
-        int room;
-        int hour;
+    struct arrayEntry{
+        Node<int>* roomPtr_m;
+        int courseId_m;
     };
-
+    
     int numOfRooms_m;
     int numOfHours_m;
-    Node<Lesson> ***array_m; // a 2d array of lesson nodes pointers
-    AvlTree<int, List<Lesson>> courseTree_m;
+
+    int numOfLessons_m;
+    int freeHours_m;
+    int freeRooms_m;
+
+    Array<Array<arrayEntry>> lectureArr_m; // a 2d array of lesson nodes pointers
+    AvlTree<int, AvlTree<Lecture, int>> courseTree_m; // a course tree of lesson trees
+
+    Array<int> roomsArr_m; //array representing available rooms
+    Array<int> hoursArr_m; //array representing available hours
+
+    Array<List<int>> availabilityPerHour_m;
+
 
 public:
 
-    Schedule(int hours = 0, int rooms = 0) : numOfHours_m(hours),
-                                             numOfRooms_m(rooms) {
-        array_m = new (Node<Lesson> **)[rooms];
-        for (int i = 0; i < rooms; i++) {
-            array_m[i] = new Node<Lesson> *[hours];
-        }
-        for (int i = 0; i < numOfRooms_m; i++) {
-            for (int j = 0; j < numOfHours_m; j++) {
-                array_m[i][j] = nullptr;
+    Schedule(int hours = 0, int rooms = 0) : numOfRooms_m(rooms),
+                                             numOfHours_m(hours),
+                                             freeHours_m(hours),
+                                             freeRooms_m(rooms),
+                                             numOfLessons_m(0),
+                                             roomsArr_m(rooms, 0),
+                                             hoursArr_m(hours, 0) {
+        
+        availabilityPerHour_m = Array<List<int>>(numOfHours_m);
+        lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m);
+        for(int i =0; i < numOfHours_m; i++){
+            for(int j = 0; j < numOfRooms_m; j++){
+                arrayEntry temp = {availabilityPerHour_m[i].addLast(j),
+                                   -1};
+                lectureArr_m[i][j] = temp;
             }
         }
-        courseTree_m = AvlTree<int, List<Lesson>>();
+        courseTree_m = AvlTree<int, AvlTree<Lecture, int>>();
     }
 
-    Schedule(const Schedule &toCopy) : numOfRooms_m(toCopy.numOfRooms_m),
-                                       numOfHours_m(toCopy.numOfHours_m) {
-        array_m = new Node<Lesson> **[numOfRooms_m];
-        for (int i = 0; i < numOfRooms_m; i++) {
-            array_m[i] = new Node<Lesson> *[numOfHours_m];
-        }
-        for (int i = 0; i < numOfRooms_m; i++) {
-            for (int j = 0; j < numOfHours_m; j++) {
-                array_m[i][j] = toCopy.array_m[i][j];
+    Schedule(const Schedule &aSchedule) {
+        numOfRooms_m = aSchedule.numOfRooms_m;
+        numOfHours_m = aSchedule.numOfHours_m;
+        numOfLessons_m = aSchedule.numOfLessons_m;
+        freeRooms_m = aSchedule.freeRooms_m;
+        freeHours_m = aSchedule.freeHours_m;
+        courseTree_m = AvlTree<int, AvlTree<Lecture, int>>(aSchedule.courseTree_m);
+
+        availabilityPerHour_m = Array<List<int>>(numOfHours_m);
+        lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m, Array<arrayEntry>(numOfRooms_m));
+
+        for(int i =0 ; i < numOfHours_m; i++){
+            Node<int>* listIterator = aSchedule.availabilityPerHour_m[i].getHead();
+            for(int j = 0; j < numOfRooms_m; j++){
+                arrayEntry temp = {availabilityPerHour_m[i].addLast(listIterator->data_m),
+                                   aSchedule.lectureArr_m[i][j].courseId_m};
+                lectureArr_m[i][j] = temp;
+                listIterator = listIterator->next_m;
             }
         }
-        courseTree_m = AvlTree<int, List<Lesson>>(toCopy.courseTree_m);
+
     }
 
-    ~Schedule() {
-        for (int j = 0; j < numOfHours_m; j++) {
-            delete array_m[j];
-        }
-        delete array_m;
-    }
+    ~Schedule() = default; //TODO there might be an issue here since freeing the array with the list references in it will cause double free
 
     Schedule &operator=(const Schedule &aSchedule) {
 
-        for (int j = 0; j < numOfHours_m; j++) {
-            delete array_m[j];
-        }
-        delete array_m;
-
         numOfRooms_m = aSchedule.numOfRooms_m;
         numOfHours_m = aSchedule.numOfHours_m;
+        numOfLessons_m = aSchedule.numOfLessons_m;
+        freeRooms_m = aSchedule.freeRooms_m;
+        freeHours_m = aSchedule.freeHours_m;
 
-        array_m = new Node<Lesson> **[numOfRooms_m];
-        for (int i = 0; i < numOfRooms_m; i++) {
-            array_m[i] = new Node<Lesson> *[numOfHours_m];
-        }
-        for (int i = 0; i < numOfRooms_m; i++) {
-            for (int j = 0; j < numOfHours_m; j++) {
-                array_m[i][j] = aSchedule.array_m[i][j];
+        courseTree_m = AvlTree<int, AvlTree<Lecture, int>>(aSchedule.courseTree_m);
+
+        availabilityPerHour_m = Array<List<int>>(numOfHours_m);
+        lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m, Array<arrayEntry>(numOfRooms_m));
+
+        for(int i =0 ; i < numOfHours_m; i++){
+            Node<int>* listIterator = aSchedule.availabilityPerHour_m[i].getHead();
+            for(int j = 0; j < numOfRooms_m; j++){
+                arrayEntry temp = {availabilityPerHour_m[i].addLast(listIterator->data_m),
+                                   aSchedule.lectureArr_m[i][j].courseId_m};
+                lectureArr_m[i][j] = temp;
+                listIterator = listIterator->next_m;
             }
         }
 
-        courseTree_m = AvlTree<int, List<Lesson>>(aSchedule.courseTree_m);
+
     }
 
-    ScheduleResult addLecture(int hour, int room, int courseId) {
+    ScheduleResult
+    addLecture(const int &hour, const int &room, const int &courseId) {
         if (room < 0 || hour < 0 || courseId <= 0 || room >= numOfRooms_m ||
             hour >= numOfHours_m) {
             return SCHEDULE_INVALID_INPUT;
@@ -97,10 +123,36 @@ public:
             return SCHEDULE_FAILURE;
         }
 
-        Lesson toAdd = {courseId, room, hour};
-        array_m[room][hour] = courseTree_m[courseId].addLast(toAdd);
-        //TODO: operator [] on avl should return the list, if course id doesnt exist it should create a new entry for it
+    }
+
+    ScheduleResult
+    getCourseId(const int &hour, const int &room, int *courseId) {
+        if (room < 0 || hour < 0 || courseId == nullptr ||
+            room >= numOfRooms_m ||
+            hour >= numOfHours_m) {
+            return SCHEDULE_INVALID_INPUT;
+        }
+        if (array_m[room][hour] == nullptr) {
+            return SCHEDULE_FAILURE;
+        }
+
+        *courseId = (array_m[room][hour])->key;
         return SCHEDULE_SUCCESS;
+    }
+
+    ScheduleResult deleteLecture(const int &hour, const int &roomId) {
+        if (roomId < 0 || hour < 0 || roomId >= numOfRooms_m ||
+            hour >= numOfHours_m) {
+            return SCHEDULE_INVALID_INPUT;
+        }
+        if (array_m[roomId][hour] == nullptr) {
+            return SCHEDULE_FAILURE;
+
+        }
+    }
+
+    ScheduleResult changeCourseId(const int &oldCourse, const int &newCourse) {
+
     }
 
 };
