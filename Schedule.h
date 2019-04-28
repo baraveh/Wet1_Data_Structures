@@ -231,6 +231,7 @@ public:
         }
 
         *rooms = freeRooms;
+        return SCHEDULE_SUCCESS;
     }
 
     ScheduleResult getAllLecturesByCourse(int courseId, int** hours, int** rooms, int* numOfLectures){
