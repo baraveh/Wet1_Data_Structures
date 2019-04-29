@@ -5,7 +5,6 @@
 #ifndef WET1_SCHEDULE_H
 #define WET1_SCHEDULE_H
 
-#include "AVL.h"
 #include "Lecture.h"
 #include "List.h"
 #include "Array.h"
