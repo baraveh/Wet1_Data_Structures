@@ -18,6 +18,8 @@ public:
 
     Lecture& operator=(const Lecture& aLesson);
 
+    void changeCourseId(int newCourseId);
+
     bool operator==(const Lecture& aLesson);
     bool operator < (const Lecture& aLesson);
     bool operator <= (const Lecture& aLesson);

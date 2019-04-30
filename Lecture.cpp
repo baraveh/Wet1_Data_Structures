@@ -54,3 +54,7 @@ bool operator>=(const Lecture &a, const Lecture &b) {
 bool operator==(const Lecture &a, const Lecture &b) {
     return (a.room_m == b.room_m && a.hour_m == b.hour_m);
 }
+
+void Lecture::changeCourseId(int newCourseId) {
+    courseId_m = newCourseId;
+}
