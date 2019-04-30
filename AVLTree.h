@@ -42,11 +42,23 @@ public:
 
     ~AVLTree();
 
-    bool insert(const T &key, const S &value = S());
+    bool insertElement(const T &key, const S &value = S());
 
-    void remove(const T &key);
+    void deleteElement(const T &key);
 
     void printBalance();
+
+    bool searchKey(const T& key);
+
+    S& operator[](const T& key);
+
+    const S& operator[](const T& key) const;
+
+    bool checkIfBalanced();
+
+    void printTree(int* arr); //prints inorder into array
+
+    int countNodesInTree();
 
 private:
     AVLNode<T, S> *root;
@@ -66,6 +78,9 @@ private:
     void setBalance(AVLNode<T, S> *aNode);
 
     void printBalance(AVLNode<T, S> *aNode);
+
+    int countNodes(AVLNode<T,S>* aNode);
+
 
 };
 
@@ -185,7 +200,7 @@ AVLTree<T, S>::~AVLTree() {
 }
 
 template<class T, class S>
-bool AVLTree<T, S>::insert(const T &key, const S &value = S()) {
+bool AVLTree<T, S>::insertElement(const T &key, const S &value = S()) {
     if (root == nullptr) {
         root = new AVLNode<T, S>(key, value, nullptr);
         return true;
@@ -217,7 +232,7 @@ bool AVLTree<T, S>::insert(const T &key, const S &value = S()) {
 }
 
 template<class T, class S>
-void AVLTree<T, S>::remove(const T &delKey) {
+void AVLTree<T, S>::deleteElement(const T &delKey) {
     if (root == nullptr) {
         //TODO - excpetion
         return;
@@ -261,6 +276,47 @@ void AVLTree<T, S>::remove(const T &delKey) {
 template<class T, class S>
 void AVLTree<T, S>::printBalance() {
     printBalance(root);
+}
+
+template<class T, class S>
+bool AVLTree<T, S>::searchKey(const T &key) {
+    return false;
+}
+
+template<class T, class S>
+S &AVLTree<T, S>::operator[](const T &key) {
+    return <#initializer#>;
+}
+
+template<class T, class S>
+const S &AVLTree<T, S>::operator[](const T &key) const {
+    return <#initializer#>;
+}
+
+template<class T, class S>
+bool AVLTree<T, S>::checkIfBalanced() {
+    return false;
+}
+
+template<class T, class S>
+void AVLTree<T, S>::printTree(int *arr) {
+
+}
+
+template<class T, class S>
+int AVLTree<T,S>::countNodesInTree() {
+    return countNodes(root);
+}
+
+template<class T, class S>
+int AVLTree<T, S>::countNodes(AVLNode<T, S> *aNode) {
+    int count = 0;
+    if (aNode != nullptr) {
+        count+=countNodes(aNode->left_m);
+        count++;
+        count+=countNodes(aNode->right_m);
+    }
+    return count;
 }
 
 

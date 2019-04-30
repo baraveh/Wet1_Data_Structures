@@ -1,14 +1,13 @@
 #include <iostream>
 #include <assert.h>
 #include <ctime> // temporary for random tests
-#include "avlTree.h"
+#include "AVLTree.h"
 
 #define magicNumber 200
 
-using namespace ManagingCourses;
 
 void testAVLTree();
-void testTreeBalance(avlTree<int> &tree);
+void testTreeBalance(AVLTree<int,int> &tree);
 
 /*
  * Tree class should have:
@@ -29,7 +28,7 @@ int main() {
 
 void testAVLTree(){
 
-    avlTree<int> tree;
+    AVLTree<int,int> tree;
     int amountToInsert=rand()%magicNumber+1; //generate random number in range [1,magicNumber]
     int range=2*magicNumber;    //keys inserted into the tree are in range [1,2*magicNumber]
 
@@ -63,14 +62,14 @@ void testAVLTree(){
     testTreeBalance(tree);
 }
 
-void testTreeBalance(avlTree<int> &tree){
+void testTreeBalance(AVLTree<int,int> &tree){
 
     assert(tree.checkIfBalanced());
 
     //check if tree's inorder is sorted correctly
     int nodesInTree=tree.countNodesInTree();
     int *arr=(int*)malloc((sizeof(*arr))*nodesInTree);
-    tree.printTree(arr,InOrder); //fill arr with the tree, by inorder. (InOrder is enum from avlTree.h)
+    tree.printTree(arr); //fill arr with the tree, by inorder.
     bool isSorted=true;
     for(int i=1;i<nodesInTree;i++)
         if(arr[i]<=arr[i-1])
