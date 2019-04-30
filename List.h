@@ -10,8 +10,8 @@
 template<typename T>
 struct Node {
     T data_m;
-    Node* next_m;
-    Node* prev_m;
+    Node *next_m;
+    Node *prev_m;
 };
 
 template<typename T>
@@ -23,25 +23,24 @@ class List {
 public:
 
     List() {
-        head_m = NULL;
-        tail_m = NULL;
+        head_m = nullptr;
+        tail_m = nullptr;
         size_m = 0;
     }
 
     List(const List &aList) {
-        head_m = NULL;
-        tail_m = NULL;
+        head_m = nullptr;
+        tail_m = nullptr;
         size_m = 0;
         Node<T> *temp = aList.head_m;
-        do{
+        while (size_m != aList.size_m) {
             addLast(temp->data_m);
-            temp= temp->next_m;
-        } while(temp != aList.head_m);
+        }
     }
 
     ~List() {
         while (size_m > 0) {
-           deleteNode(head_m);
+            deleteNode(head_m);
         }
     }
 
@@ -52,10 +51,10 @@ public:
         }
 
         Node<T> *temp = aList.head_m;
-        do{
+        do {
             addLast(temp->data_m);
-            temp= temp->next_m;
-        } while(temp != aList.head_m);
+            temp = temp->next_m;
+        } while (temp != aList.head_m);
     }
 
     Node<T> *
@@ -83,39 +82,41 @@ public:
         return temp;
     }
 
-    
-    void deleteNode(const Node<T>* node){ //deletes a given node in the list
-       if(node != nullptr && size_m > 0) {
-           if(node == head_m){
-               head_m = node->next_m;
-           }
-           if(node == tail_m){
-               tail_m = node->prev_m;
-           }
-           node->prev_m->next_m = node->next_m;
-           node->next_m->prev_m = node->prev_m;
-           delete node;
-           size_m--;
-       }
+
+    void deleteNode(const Node<T> *node) { //deletes a given node in the list
+        if (node != nullptr && size_m > 0) {
+            if (node == head_m) {
+                head_m = node->next_m;
+            }
+            if (node == tail_m) {
+                tail_m = node->prev_m;
+            }
+            node->prev_m->next_m = node->next_m;
+            node->next_m->prev_m = node->prev_m;
+            delete node;
+            size_m--;
+        }
     }
 
     void appendList(const List &aList) {
-        Node<T> *temp = aList.head_m;
-        do{
-            addLast(temp->data_m);
-            temp= temp->next_m;
-        } while(temp != aList.head_m);
+        int firstListSize = size_m;
+        Node<T> *iterator = aList.head_m;
+        while (iterator != nullptr &&
+               size_m != firstListSize + aList.size_m) {
+            addLast(iterator->data_m);
+            iterator = iterator->next_m;
+        }
     }
 
-    bool isEmpty(){
+    bool isEmpty() {
         return size_m == 0;
     }
 
-    void moveNodeToEnd (Node<T>* node){
-        if(node == head_m){
+    void moveNodeToEnd(Node<T> *node) {
+        if (node == head_m) {
             head_m = node->next_m;
         }
-        if(node == tail_m){
+        if (node == tail_m) {
             tail_m = node->prev_m;
         }
         node->prev_m->next_m = node->next_m;
@@ -127,11 +128,11 @@ public:
         head_m = node->next_m;
     }
 
-    void moveNodeToStart (Node<T>* node){
-        if(node == head_m){
+    void moveNodeToStart(Node<T> *node) {
+        if (node == head_m) {
             head_m = node->next_m;
         }
-        if(node == tail_m){
+        if (node == tail_m) {
             tail_m = node->prev_m;
         }
         node->prev_m->next_m = node->next_m;
@@ -143,22 +144,23 @@ public:
         tail_m = node->prev_m;
     }
 
-    int& getSize(){
+    int &getSize() {
         return size_m;
     }
 
-    Node<T>* getHead() const{
+    Node<T> *getHead() const {
         return head_m;
     }
 
-    Node<T>* getHead(){
+    Node<T> *getHead() {
         return head_m;
     }
 
-    Node<T>* getTail() const{
+    Node<T> *getTail() const {
         return tail_m;
     }
-    Node<T>* getTail(){
+
+    Node<T> *getTail() {
         return tail_m;
     }
 };

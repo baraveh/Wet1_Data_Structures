@@ -74,6 +74,7 @@ void testTreeBalance(AVLTree<int,int> &tree){
     for(int i=1;i<nodesInTree;i++)
         if(arr[i]<=arr[i-1])
             isSorted = false;
-    free(arr);
+
     assert(isSorted);
+    free(arr);
 }
