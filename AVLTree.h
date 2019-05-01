@@ -7,7 +7,7 @@
 
 #include<iostream>
 #include<cstdio>
-#include "List.h"
+#include "exception.h"
 
 
 using namespace std;
@@ -61,6 +61,10 @@ public:
 
     int countNodesInTree();
 
+    AVLTree<T,S> mergeTrees(const AVLTree<T,S>& treeA, const AVLTree& treeB);
+
+    AVLNode<T,S>* getRoot();
+
 private:
     AVLNode<T, S> *root;
 
@@ -85,6 +89,8 @@ private:
     void printTree(AVLNode<T, S> *aNode, T* arr, int* iteration);
 
     bool checkIfBalanced(AVLNode<T, S> *aNode);
+
+    AVLNode<T,S>* mergeTrees(AVLNode<T,S>* treeA, AVLNode<T,S>* treeB);
 
 
 };
@@ -207,26 +213,36 @@ AVLTree<T, S>::~AVLTree() {
 template<class T, class S>
 bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
     if (root == nullptr) {
-        root = new AVLNode<T, S>(key, value, nullptr);
+        try {
+            root = new AVLNode<T, S>(key, value, nullptr);
+        }
+        catch(std::bad_alloc& e){
+            throw MemError();
+        }
         return true;
     }
     AVLNode<T, S> *iterator = root;
     AVLNode<T, S> *parent;
 
     while (true) {
-        if (iterator->key_m == key)
-            //TODO exception
-            return false;
+        if (iterator->key_m == key) {
+            throw KeyAlreadyExists();
+        }
 
         parent = iterator;
         bool goLeft = (iterator->key_m) > key;
         iterator = goLeft ? iterator->left_m : iterator->right_m;
 
         if (iterator == nullptr) {
-            if (goLeft) {
-                parent->left_m = new AVLNode<T, S>(key, value, parent);
-            } else {
-                parent->right_m = new AVLNode<T, S>(key, value, parent);
+            try {
+                if (goLeft) {
+                    parent->left_m = new AVLNode<T, S>(key, value, parent);
+                } else {
+                    parent->right_m = new AVLNode<T, S>(key, value, parent);
+                }
+            }
+            catch(std::bad_alloc& e){
+                throw MemError();
             }
 
             balance(parent);
@@ -239,8 +255,7 @@ bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
 template<class T, class S>
 void AVLTree<T, S>::deleteElement(const T &delKey) {
     if (root == nullptr) {
-        //TODO - excpetion
-        return;
+        throw NoSuchKey();
     }
 
     AVLNode<T, S> *iterator = root;
@@ -257,8 +272,7 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
             delNode = iterator;
     }
     if (delNode == nullptr) {
-        //TODO exception
-        return;
+        throw NoSuchKey();
     }
 
     delNode->key_m = iterator->key_m;
@@ -309,7 +323,7 @@ S &AVLTree<T, S>::operator[](const T &key) {
         bool goLeft = (iterator->key_m) > key;
         iterator = goLeft ? iterator->left_m : iterator->right_m;
     }
-    //TODO exception
+    throw NoSuchKey();
 }
 
 template<class T, class S>
@@ -322,7 +336,7 @@ const S &AVLTree<T, S>::operator[](const T &key) const {
         bool goLeft = (iterator->key_m) > key;
         iterator = goLeft ? iterator->left_m : iterator->right_m;
     }
-    //TODO exception
+    throw NoSuchKey();
 }
 
 template<class T, class S>
@@ -364,10 +378,6 @@ void AVLTree<T, S>::printTree(AVLNode<T, S> *aNode, T* arr, int* iteration) {
 
 template<class T, class S>
 void AVLTree<T, S>::printTree(T *arr) {
-    if (arr == nullptr) {
-        //TODO exception
-        return;
-    }
     int iteration = 0;
     printTree(root, arr, &iteration);
 }
@@ -379,6 +389,23 @@ bool AVLTree<T, S>::checkIfBalanced(AVLNode<T, S> *aNode) {
     }
     return ((checkIfBalanced(aNode->left_m)) && abs(aNode->balance_m) < 2 &&
             checkIfBalanced(aNode->right_m));
+}
+
+template<class T, class S>
+AVLTree<T, S>
+AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
+
+}
+
+template<class T, class S>
+AVLNode<T, S> *
+AVLTree<T, S>::mergeTrees(AVLNode<T, S> *treeA, AVLNode<T, S> *treeB) {
+
+}
+
+template<class T, class S>
+AVLNode<T, S> *AVLTree<T, S>::getRoot() {
+    return root;
 }
 
 

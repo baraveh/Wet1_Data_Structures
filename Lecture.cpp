@@ -58,3 +58,11 @@ bool operator==(const Lecture &a, const Lecture &b) {
 void Lecture::changeCourseId(int newCourseId) {
     courseId_m = newCourseId;
 }
+
+int Lecture::getRoom() {
+    return room_m;
+}
+
+int Lecture::getHour() {
+    return hour_m;
+}

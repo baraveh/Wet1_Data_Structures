@@ -20,6 +20,9 @@ public:
 
     void changeCourseId(int newCourseId);
 
+    int getRoom();
+    int getHour();
+
     bool operator==(const Lecture& aLesson);
     bool operator < (const Lecture& aLesson);
     bool operator <= (const Lecture& aLesson);

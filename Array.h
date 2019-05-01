@@ -11,14 +11,11 @@ class Array {
     int size_m;
 public:
 
-    explicit Array(const int& size = 0, const T& defVal = T()){
+    Array(const int& size = 0, const T& defVal = T()){
         size_m = size;
         array_m = new T[size_m]{defVal};
     }
 
-    Array(const int& size = 0): size_m(size){
-      array_m = new T[size_m];
-    }
 
     Array(const Array& aArray){
         size_m = aArray.size_m;
