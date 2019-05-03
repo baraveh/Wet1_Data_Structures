@@ -20,11 +20,11 @@ void testTreeBalance(AVLTree<int,int> &tree);
  *          if the tree is valid binary search tree then arr should return sorted.
  */
 
-/*int main() {
+int main() {
     srand(time(NULL)); //for random numbers in tests
-    for(int i=1;i<3000;i++)
+    for(int i=1;i<2;i++)
         testAVLTree();
-} */
+}
 
 void testAVLTree(){
 
@@ -39,6 +39,7 @@ void testAVLTree(){
 
         //testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
+    tree.printInOrder();
     AVLTree<int,int> tree2;
     int amountToInsert2=rand()%magicNumber+1; //generate random number in range [1,magicNumber]
     int range2=2*magicNumber;    //keys inserted into the tree are in range [1,2*magicNumber]
@@ -50,9 +51,11 @@ void testAVLTree(){
 
         //testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
+    tree2.printInOrder();
     AVLTree<int,int> treeA;
     treeA.mergeTrees (tree,tree2);
     testTreeBalance(tree);
+    treeA.printInOrder();
 
     int afterInsert=treeA.countNodesInTree();
 
