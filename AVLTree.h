@@ -45,6 +45,7 @@ public:
     S &getValue() {
         return value_m;
     }
+
 };
 
 template<typename T, typename S>
@@ -115,6 +116,7 @@ private:
                AVLNode<T, S> *parent);
 
 };
+
 
 template<class T, class S>
 void AVLTree<T, S>::balance(AVLNode<T, S> *aNode) {
@@ -321,9 +323,9 @@ void AVLTree<T, S>::printBalance() {
 template<class T, class S>
 bool AVLTree<T, S>::searchKey(const T &key) {
 
-    AVLNode<T, S> *iterator = root;
+    AVLNode<T, S>* iterator = root;
 
-    while (iterator != nullptr) {
+    while (iterator != nullptr && iterator != NULL) {
         if (iterator->key_m == key)
             return true;
 
@@ -436,7 +438,7 @@ AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
     delete[] treeBVals;
 
     AVLNode<T,S>* temp = root;
-    root = mergeTrees(nodeArr, 0, treeASize + treeBSize,
+    root = mergeTrees(nodeArr, 0, treeASize + treeBSize - 1,
                       nullptr);
     delete [] nodeArr;
     delete temp;
@@ -466,6 +468,7 @@ AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
     T key = nodeArr[mid].key_m;
     S value = nodeArr[mid].value_m;
     AVLNode<T,S>* aNode = new AVLNode<T,S>(key, value, parent);
+    aNode->parent_m = parent;
     aNode->left_m = mergeTrees(nodeArr, start, mid-1, aNode);
     aNode->right_m = mergeTrees(nodeArr, mid+1, end, aNode);
     return aNode;
@@ -501,7 +504,8 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
             mergedArr[k].key_m = arr1Keys[i];
             mergedArr[k].value_m = arr1Values[i];
             i++;
-        } else {
+        }
+        else {
             mergedArr[k].key_m = arr2Keys[j];
             mergedArr[k].value_m = arr2Values[j];
             j++;

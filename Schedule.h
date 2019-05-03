@@ -237,7 +237,7 @@ public:
 
         try {
 
-            courseTree_m[newCourse] = mergeTrees(courseTree_m[oldCourse],
+            courseTree_m[newCourse].mergeTrees(courseTree_m[oldCourse],
                                                  courseTree_m[newCourse]);
         }
         catch (MemError& e){
@@ -299,13 +299,15 @@ public:
 
         Lecture *lectureArr = (Lecture *) malloc(
                 sizeof(*lectureArr) * (*numOfLectures));
+        int* garbageArr = new int[*numOfLectures];
         *rooms = (int *) malloc(sizeof(int) * (*numOfLectures));
         *hours = (int *) malloc(sizeof(int) * (*numOfLectures));
         if (!*rooms || !*hours || !lectureArr) {
             return SCHEDULE_MEMORY_ERROR;
         }
 
-        courseTree_m[courseId].printTree(lectureArr);
+        courseTree_m[courseId].printTree(lectureArr, garbageArr);
+        delete [] garbageArr;
         for (int i = 0; i < *numOfLectures; i++) {
             (*rooms)[i] = lectureArr[i].getRoom();
             (*hours)[i] = lectureArr[i].getHour();
