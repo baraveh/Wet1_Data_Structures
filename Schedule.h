@@ -237,8 +237,11 @@ public:
 
         try {
 
-            courseTree_m[newCourse].mergeTrees(courseTree_m[oldCourse],
-                                                 courseTree_m[newCourse]);
+            AVLTree<Lecture, int> temp;
+            temp.mergeTrees(courseTree_m[oldCourse],
+                            courseTree_m[newCourse]);
+            changeLectureCourseID(temp.getRoot(), newCourse);
+            courseTree_m[newCourse] = AVLTree<Lecture, int>(temp);
         }
         catch (MemError& e){
             return SCHEDULE_MEMORY_ERROR;
@@ -256,7 +259,7 @@ public:
         if (numOfLessons_m == 0) {
             return SCHEDULE_FAILURE;
         }
-        *efficiency = (numOfLessons_m / ((numOfRooms_m - freeRooms_m) *
+        *efficiency = (numOfLessons_m / ((numOfRooms_m) *
                                          (numOfHours_m - freeHours_m)));
         return SCHEDULE_SUCCESS;
     }

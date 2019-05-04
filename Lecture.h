@@ -12,7 +12,7 @@ class Lecture {
     int courseId_m;
 
 public:
-    Lecture(const int& hour, const int& room, const int& courseId);
+    Lecture(const int& hour= 0, const int& room = 0, const int& courseId = -1);
     Lecture(const Lecture& aLesson) = default;
     ~Lecture() = default;
 
