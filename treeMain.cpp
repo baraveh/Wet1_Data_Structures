@@ -8,6 +8,7 @@
 
 void testAVLTree();
 void testTreeBalance(AVLTree<int,int> &tree);
+void testMerge(AVLTree<int,int> & mergedTree, AVLTree<int,int> &tree1, AVLTree<int,int> &tree2);
 
 /*
  * Tree class should have:
@@ -19,10 +20,9 @@ void testTreeBalance(AVLTree<int,int> &tree);
  *      printTree(int *arr, (enum)InOrder) - scan the tree inorder and put the results inside arr.
  *          if the tree is valid binary search tree then arr should return sorted.
  */
-
 int main() {
     srand(time(NULL)); //for random numbers in tests
-    for(int i=1;i < 5;i++)
+    for(int i=1;i < 1000;i++)
         testAVLTree();
 }
 
@@ -52,9 +52,12 @@ void testAVLTree(){
     }
     AVLTree<int,int> treeA;
     treeA.mergeTrees (tree,tree2);
-    assert(treeA.countNodesInTree() == tree.countNodesInTree() + tree2.countNodesInTree());
 
-    testTreeBalance(tree);
+
+
+    testMerge(treeA, tree, tree2);
+    testTreeBalance(treeA);
+
 
     int afterInsert = treeA.countNodesInTree();
 
@@ -70,7 +73,7 @@ void testAVLTree(){
             removalCounter--;
             r++;
 
-            testTreeBalance(tree); //Extra: check if tree is correct after every removal
+            testTreeBalance(treeA); //Extra: check if tree is correct after every removal
         }
     }
     int afterRemoval=treeA.countNodesInTree();
@@ -88,15 +91,86 @@ void testTreeBalance(AVLTree<int,int> &tree){
 
     //check if tree's inorder is sorted correctly
     int nodesInTree=tree.countNodesInTree();
-    int *arr=(int*)malloc((sizeof(*arr))*nodesInTree);
-    int *arr2 = (int*)malloc((sizeof(*arr))*nodesInTree);
+    int *arr=(int*)malloc((sizeof(*arr))*(nodesInTree));
+    int *arr2 = (int*)malloc((sizeof(*arr))*(nodesInTree));
     tree.printTree(arr, arr2); //fill arr with the tree, by inorder.
-    bool isSorted=true;
-    for(int i=1;i<nodesInTree;i++)
-        if(arr[i]< arr[i-1])
-            isSorted = false;
+    for(int i=1;i<nodesInTree;i++) {
+        if(arr[i] <= arr[i - 1]){
+            tree.printInOrder();
+        }
+        assert (arr[i] > arr[i - 1]);
+    }
 
-    assert(isSorted);
     free(arr);
     free(arr2);
 }
+
+void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
+               AVLTree<int, int> &tree2) {
+    int nodesInTree = mergedTree.countNodesInTree();
+    mergedTree.printInOrder();
+    int *mergedArrKeys=(int*)malloc((sizeof(*mergedArrKeys))*(nodesInTree));
+    int *mergedArrValues= (int*)malloc((sizeof(*mergedArrValues))*(nodesInTree));
+    mergedTree.printTree(mergedArrKeys, mergedArrValues);
+    for(int i=0;i<nodesInTree;i++) {
+        assert(tree1.searchKey(mergedArrKeys[i]) || tree2.searchKey(mergedArrKeys[i]));
+    }
+
+    free(mergedArrKeys);
+    free(mergedArrValues);
+
+    nodesInTree = tree1.countNodesInTree();
+    int *tree1Keys=(int*)malloc((sizeof(*tree1Keys))*(nodesInTree));
+    int *tree1Values = (int*)malloc((sizeof(*tree1Values))*(nodesInTree));
+    tree1.printTree(tree1Keys, tree1Values);
+    for(int i=0;i<nodesInTree;i++) {
+        assert(mergedTree.searchKey(tree1Keys[i]));
+    }
+
+    free(tree1Keys);
+    free(tree1Values);
+
+    nodesInTree = tree1.countNodesInTree();
+    int *tree2Keys=(int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
+    int *tree2Values = (int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
+    tree2.printTree(tree2Keys, tree2Values);
+    for(int i=0;i<nodesInTree;i++) {
+        assert(mergedTree.searchKey(tree2Keys[i]));
+    }
+
+    free(tree2Keys);
+    free(tree2Values);
+}
+
+
+
+/* int main()
+{
+
+    AVLTree<int, int> tree1;
+    tree1.insertElement(100,0);
+    tree1.insertElement(50,0);
+    tree1.insertElement(300,0);
+    tree1.insertElement(20,0);
+    tree1.insertElement(70,0);
+
+    cout << "Following is Inorder traversal of tree 1 \n";
+    tree1.printInOrder();
+
+
+    AVLTree<int, int> tree2;
+    tree2.insertElement(80,0);
+    tree2.insertElement(40,0);
+    tree2.insertElement(120,0);
+
+    cout << "Following is Inorder traversal of tree 2 \n";
+    tree2.printInOrder();
+
+    AVLTree<int, int> mergedTree;
+    mergedTree.mergeTrees(tree1, tree2);
+
+    cout << "Following is Inorder traversal of the merged tree \n";
+    mergedTree.printInOrder();
+
+    return 0;
+} */

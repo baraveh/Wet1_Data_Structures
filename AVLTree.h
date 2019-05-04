@@ -51,7 +51,7 @@ public:
 template<typename T, typename S>
 static AVLNode<T, S> *
 mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
-                  int arr1Size, int arr2Size);
+                  int arr1Size, int arr2Size, int* mergedArrSize);
 
 template<class T, class S>
 class AVLTree {
@@ -111,7 +111,7 @@ private:
 
     bool checkIfBalanced(AVLNode<T, S> *aNode);
 
-    AVLNode<T, S> *
+    AVLNode<T,S>*
     mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
                AVLNode<T, S> *parent);
 
@@ -230,7 +230,7 @@ AVLTree<T, S>::AVLTree() : root(nullptr) {}
 
 template<class T, class S>
 AVLTree<T, S>::~AVLTree() {
-    delete root;
+        delete root;
 }
 
 template<class T, class S>
@@ -302,8 +302,10 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
     child = (iterator->left_m != nullptr) ? iterator->left_m
                                           : iterator->right_m;
 
+
     if (root->key_m == delKey) {
         root = child;
+        delete delNode;
         return;
     }
 
@@ -312,6 +314,7 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
     } else {
         parent->right_m = child;
     }
+    delete delNode;
     balance(parent);
 }
 
@@ -376,7 +379,7 @@ int AVLTree<T, S>::countNodesInTree() const {
 template<class T, class S>
 int AVLTree<T, S>::countNodes(const AVLNode<T, S> *aNode) const{
     int count = 0;
-    if (aNode != nullptr) {
+    if (aNode != nullptr && aNode != NULL) {
         count += countNodes(aNode->left_m);
         count++;
         count += countNodes(aNode->right_m);
@@ -396,6 +399,7 @@ void AVLTree<T, S>::printTree(AVLNode<T, S> *aNode, T *keyArr, S *valArr,
     *(keyArr + *iteration) = aNode->key_m;
     *(valArr + *iteration) = aNode->value_m;
     *iteration += 1;
+
     if (aNode->right_m != nullptr) {
         printTree(aNode->right_m, keyArr, valArr, iteration);
     }
@@ -429,17 +433,16 @@ AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
     treeA.printTree(treeAKeys, treeAVals);
     treeB.printTree(treeBKeys, treeBVals);
 
+    int nodeArrSize = 0;
     AVLNode<T, S> *nodeArr = mergeSortedArrays(treeAKeys, treeAVals, treeBKeys,
-                                               treeBVals, treeASize, treeBSize);
-
+                                               treeBVals, treeASize, treeBSize, &nodeArrSize);
     delete[] treeAKeys;
     delete[] treeAVals;
     delete[] treeBKeys;
     delete[] treeBVals;
 
     AVLNode<T,S>* temp = root;
-    root = mergeTrees(nodeArr, 0, treeASize + treeBSize - 1,
-                      nullptr);
+    root = mergeTrees(nodeArr, 0, (nodeArrSize)-1, nullptr);
     delete [] nodeArr;
     delete temp;
     }
@@ -455,7 +458,7 @@ AVLNode<T, S> *AVLTree<T, S>::getRoot() {
 }
 
 template<class T, class S>
-AVLNode<T, S> *
+AVLNode<T,S>*
 AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
                           AVLNode<T, S> *parent) {
     if(!nodeArr){
@@ -468,7 +471,6 @@ AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
     T key = nodeArr[mid].key_m;
     S value = nodeArr[mid].value_m;
     AVLNode<T,S>* aNode = new AVLNode<T,S>(key, value, parent);
-    aNode->parent_m = parent;
     aNode->left_m = mergeTrees(nodeArr, start, mid-1, aNode);
     aNode->right_m = mergeTrees(nodeArr, mid+1, end, aNode);
     return aNode;
@@ -485,7 +487,7 @@ void AVLTree<T, S>::printInOrder(AVLNode<T, S> *aNode) {
         return;
     }
     printInOrder(aNode->left_m);
-    std::cout << aNode->key_m << "\n";
+    std::cout << aNode->key_m << ",";
     printInOrder(aNode->right_m);
 }
 
@@ -493,39 +495,59 @@ void AVLTree<T, S>::printInOrder(AVLNode<T, S> *aNode) {
 template<typename T, typename S>
 AVLNode<T, S> *
 mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
-                  int arr1Size, int arr2Size) {
-    if (!arr1Keys || !arr2Keys || !arr1Values || !arr2Values) {
+                  int arr1Size, int arr2Size, int* mergedSize) {
+    if (!arr1Keys || !arr2Keys || !arr1Values || !arr2Values || !mergedSize) {
         throw MemError();
     }
     AVLNode<T,S>* mergedArr = new AVLNode<T,S>[arr1Size + arr2Size];
     int i = 0, j = 0, k = 0;
-    while (i < arr1Size && j < arr2Size) {
-        if (arr1Keys[i] < arr2Keys[j]) {
+    while (i < arr1Size && j < arr2Size)
+    {
+        if (arr1Keys[i] <= arr2Keys[j])
+        {
             mergedArr[k].key_m = arr1Keys[i];
             mergedArr[k].value_m = arr1Values[i];
             i++;
+            if(arr1Keys[i] == arr2Keys[i]){
+                j++;
+            }
         }
-        else {
+        else
+        {
             mergedArr[k].key_m = arr2Keys[j];
             mergedArr[k].value_m = arr2Values[j];
             j++;
         }
         k++;
     }
-    while (i < arr1Size) {
+
+    while (i <arr1Size )
+    {
         mergedArr[k].key_m = arr1Keys[i];
         mergedArr[k].value_m = arr1Values[i];
         i++;
         k++;
     }
 
-    while (j < arr2Size) {
-        mergedArr[k] = arr2Keys[j];
+    while (j < arr2Size)
+    {
+        mergedArr[k].key_m = arr1Keys[i];
+        mergedArr[k].value_m = arr1Values[i];
         j++;
         k++;
     }
+    *mergedSize = k;
     return mergedArr;
+}
 
+template<typename T, typename S>
+static bool isSorted(AVLNode<T,S>* arr, int size){
+    for(int i = 1; i < size; i++){
+        if(arr[i].key_m < arr[i-1].key_m){
+            return false;
+        }
+    }
+    return true;
 }
 
 #endif //WET1_DATA_STRUCTURES_AVLTree_H
