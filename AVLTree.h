@@ -305,7 +305,6 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
 
     if (root->key_m == delKey) {
         root = child;
-        delete delNode;
         return;
     }
 
@@ -314,7 +313,6 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
     } else {
         parent->right_m = child;
     }
-    delete delNode;
     balance(parent);
 }
 
@@ -507,13 +505,12 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
         {
             mergedArr[k].key_m = arr1Keys[i];
             mergedArr[k].value_m = arr1Values[i];
-            i++;
-            if(arr1Keys[i] == arr2Keys[i]){
+            if(arr1Keys[i] == arr2Keys[j]){
                 j++;
             }
+            i++;
         }
-        else
-        {
+        else {
             mergedArr[k].key_m = arr2Keys[j];
             mergedArr[k].value_m = arr2Values[j];
             j++;
@@ -531,8 +528,8 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
 
     while (j < arr2Size)
     {
-        mergedArr[k].key_m = arr1Keys[i];
-        mergedArr[k].value_m = arr1Values[i];
+        mergedArr[k].key_m = arr2Keys[j];
+        mergedArr[k].value_m = arr2Values[j];
         j++;
         k++;
     }

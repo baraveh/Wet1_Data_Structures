@@ -22,11 +22,14 @@ void testMerge(AVLTree<int,int> & mergedTree, AVLTree<int,int> &tree1, AVLTree<i
  */
 int main() {
     srand(time(NULL)); //for random numbers in tests
-    for(int i=1;i < 1000;i++)
-        testAVLTree();
+
+        for (int i = 1; i < 1000; i++) {
+                testAVLTree();
+        }
 }
 
 void testAVLTree(){
+
 
     AVLTree<int,int> tree;
     int amountToInsert=rand()%magicNumber+1; //generate random number in range [1,magicNumber]
@@ -34,61 +37,73 @@ void testAVLTree(){
     int t1 = 0;
     for(int i=1;i<amountToInsert;i++){
         int keyToInsert=rand()%range + 1; // random number in range [1,magicNumber*2]
-        if(!tree.searchKey(keyToInsert))
+        if(!tree.searchKey(keyToInsert)) {
             tree.insertElement(keyToInsert);
             t1++;
-        testTreeBalance(tree); //Extra: check if tree is correct after every insert
+        }
+        //     testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
+   // tree.printInOrder();
     AVLTree<int,int> tree2;
     int amountToInsert2=rand()%magicNumber+1; //generate random number in range [1,magicNumber]
     int range2=2*magicNumber;    //keys inserted into the tree are in range [1,2*magicNumber]
     int t2 =0 ;
     for(int i=1;i<amountToInsert2;i++){
         int keyToInsert2=rand()%range2 + 1; // random number in range [1,magicNumber*2]
-        if(!tree2.searchKey(keyToInsert2) && !tree.searchKey(keyToInsert2))
+        if(!tree2.searchKey(keyToInsert2) && !tree.searchKey(keyToInsert2)) {
             tree2.insertElement(keyToInsert2);
             t2++;
-        testTreeBalance(tree); //Extra: check if tree is correct after every insert
-    }
-    AVLTree<int,int> treeA;
-    treeA.mergeTrees (tree,tree2);
-
-
-
-    testMerge(treeA, tree, tree2);
-    testTreeBalance(treeA);
-
-
-    int afterInsert = treeA.countNodesInTree();
-
-    int elementsToRemove=rand()%(afterInsert+1); // choose randomly how many nodes to remove from tree
-    int r =0;
-    int removalCounter=elementsToRemove;
-    while(removalCounter > 0){
-        assert(treeA.getRoot() != nullptr || treeA.getRoot() != NULL);
-        int keyToRemove=rand()%range + 1; // random number in range [1,magicNumber*2]
-        if(treeA.searchKey(keyToRemove)){
-            assert(treeA.getRoot() != nullptr || treeA.getRoot() != NULL);
-            treeA.deleteElement(keyToRemove);
-            removalCounter--;
-            r++;
-
-            testTreeBalance(treeA); //Extra: check if tree is correct after every removal
         }
+        //    testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
-    int afterRemoval=treeA.countNodesInTree();
-    assert(afterRemoval+elementsToRemove==afterInsert); //make sure no branches in tree are lost during removal
+        AVLTree<int, int> treeA;
+        try{
+        treeA.mergeTrees(tree, tree2);
+        int afterInsert = treeA.countNodesInTree();
+
+     //       treeA.printInOrder();
+            testMerge(treeA, tree, tree2);
 
 
-    testTreeBalance(tree);
-    testTreeBalance(tree2);
-    testTreeBalance(treeA);
+//    testTreeBalance(treeA);
+
+
+
+        int elementsToRemove = rand() % (afterInsert + 1); // choose randomly how many nodes to remove from tree
+        int r = 0;
+        int removalCounter = elementsToRemove;
+        while (removalCounter > 0) {
+            assert(treeA.getRoot() != nullptr || treeA.getRoot() != NULL);
+            int keyToRemove = rand() % range + 1; // random number in range [1,magicNumber*2]
+            if (treeA.searchKey(keyToRemove)) {
+                assert(treeA.getRoot() != nullptr || treeA.getRoot() != NULL);
+                treeA.deleteElement(keyToRemove);
+                removalCounter--;
+                r++;
+
+                //        testTreeBalance(treeA); //Extra: check if tree is correct after every removal
+            }
+        }
+        int afterRemoval = treeA.countNodesInTree();
+        assert(afterRemoval + elementsToRemove == afterInsert); //make sure no branches in tree are lost during removal
+
+
+        //testTreeBalance(tree);
+        //testTreeBalance(tree2);
+        //testTreeBalance(treeA);
+    }
+    catch(std::exception& e) {
+        e.what();
+        tree.printInOrder();
+        tree2.printInOrder();
+        treeA.printInOrder();
+
+    }
 }
 
-void testTreeBalance(AVLTree<int,int> &tree){
-
+/*void testTreeBalance(AVLTree<int,int> &tree){
+    tree.printInOrder();
     assert(tree.checkIfBalanced());
-
     //check if tree's inorder is sorted correctly
     int nodesInTree=tree.countNodesInTree();
     int *arr=(int*)malloc((sizeof(*arr))*(nodesInTree));
@@ -104,11 +119,10 @@ void testTreeBalance(AVLTree<int,int> &tree){
     free(arr);
     free(arr2);
 }
-
+*/
 void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
                AVLTree<int, int> &tree2) {
     int nodesInTree = mergedTree.countNodesInTree();
-    mergedTree.printInOrder();
     int *mergedArrKeys=(int*)malloc((sizeof(*mergedArrKeys))*(nodesInTree));
     int *mergedArrValues= (int*)malloc((sizeof(*mergedArrValues))*(nodesInTree));
     mergedTree.printTree(mergedArrKeys, mergedArrValues);
@@ -123,16 +137,21 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
     int *tree1Keys=(int*)malloc((sizeof(*tree1Keys))*(nodesInTree));
     int *tree1Values = (int*)malloc((sizeof(*tree1Values))*(nodesInTree));
     tree1.printTree(tree1Keys, tree1Values);
+
     for(int i=0;i<nodesInTree;i++) {
+
         assert(mergedTree.searchKey(tree1Keys[i]));
     }
 
     free(tree1Keys);
     free(tree1Values);
 
-    nodesInTree = tree1.countNodesInTree();
+    nodesInTree = tree2.countNodesInTree();
     int *tree2Keys=(int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
     int *tree2Values = (int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
+    tree1.printInOrder();
+    tree2.printInOrder();
+    mergedTree.printInOrder();
     tree2.printTree(tree2Keys, tree2Values);
     for(int i=0;i<nodesInTree;i++) {
         assert(mergedTree.searchKey(tree2Keys[i]));
