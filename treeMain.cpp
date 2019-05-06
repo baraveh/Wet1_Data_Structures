@@ -3,7 +3,7 @@
 #include <ctime> // temporary for random tests
 #include "AVLTree.h"
 
-#define magicNumber 50
+#define magicNumber 200
 
 
 void testAVLTree();
@@ -23,7 +23,7 @@ void testMerge(AVLTree<int,int> & mergedTree, AVLTree<int,int> &tree1, AVLTree<i
 int main() {
     srand(time(NULL)); //for random numbers in tests
 
-        for (int i = 1; i < 1000; i++) {
+        for (int i = 1; i < 3000; i++) {
                 testAVLTree();
         }
 }
@@ -41,7 +41,7 @@ void testAVLTree(){
             tree.insertElement(keyToInsert);
             t1++;
         }
-        //     testTreeBalance(tree); //Extra: check if tree is correct after every insert
+        testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
    // tree.printInOrder();
     AVLTree<int,int> tree2;
@@ -54,18 +54,16 @@ void testAVLTree(){
             tree2.insertElement(keyToInsert2);
             t2++;
         }
-        //    testTreeBalance(tree); //Extra: check if tree is correct after every insert
+        testTreeBalance(tree); //Extra: check if tree is correct after every insert
     }
         AVLTree<int, int> treeA;
-        try{
         treeA.mergeTrees(tree, tree2);
         int afterInsert = treeA.countNodesInTree();
 
-     //       treeA.printInOrder();
             testMerge(treeA, tree, tree2);
 
 
-//    testTreeBalance(treeA);
+           testTreeBalance(treeA);
 
 
 
@@ -81,28 +79,19 @@ void testAVLTree(){
                 removalCounter--;
                 r++;
 
-                //        testTreeBalance(treeA); //Extra: check if tree is correct after every removal
+                testTreeBalance(treeA); //Extra: check if tree is correct after every removal
             }
         }
         int afterRemoval = treeA.countNodesInTree();
-        assert(afterRemoval + elementsToRemove == afterInsert); //make sure no branches in tree are lost during removal
+       assert(afterRemoval + elementsToRemove == afterInsert); //make sure no branches in tree are lost during removal
 
 
-        //testTreeBalance(tree);
-        //testTreeBalance(tree2);
-        //testTreeBalance(treeA);
+        testTreeBalance(tree);
+        testTreeBalance(tree2);
+        testTreeBalance(treeA);
     }
-    catch(std::exception& e) {
-        e.what();
-        tree.printInOrder();
-        tree2.printInOrder();
-        treeA.printInOrder();
 
-    }
-}
-
-/*void testTreeBalance(AVLTree<int,int> &tree){
-    tree.printInOrder();
+void testTreeBalance(AVLTree<int,int> &tree){
     assert(tree.checkIfBalanced());
     //check if tree's inorder is sorted correctly
     int nodesInTree=tree.countNodesInTree();
@@ -110,16 +99,13 @@ void testAVLTree(){
     int *arr2 = (int*)malloc((sizeof(*arr))*(nodesInTree));
     tree.printTree(arr, arr2); //fill arr with the tree, by inorder.
     for(int i=1;i<nodesInTree;i++) {
-        if(arr[i] <= arr[i - 1]){
-            tree.printInOrder();
-        }
         assert (arr[i] > arr[i - 1]);
     }
 
     free(arr);
     free(arr2);
 }
-*/
+
 void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
                AVLTree<int, int> &tree2) {
     int nodesInTree = mergedTree.countNodesInTree();
@@ -149,9 +135,6 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
     nodesInTree = tree2.countNodesInTree();
     int *tree2Keys=(int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
     int *tree2Values = (int*)malloc((sizeof(*tree2Keys))*(nodesInTree));
-    tree1.printInOrder();
-    tree2.printInOrder();
-    mergedTree.printInOrder();
     tree2.printTree(tree2Keys, tree2Values);
     for(int i=0;i<nodesInTree;i++) {
         assert(mergedTree.searchKey(tree2Keys[i]));
@@ -169,9 +152,7 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
     AVLTree<int, int> tree1;
     tree1.insertElement(100,0);
     tree1.insertElement(50,0);
-    tree1.insertElement(300,0);
-    tree1.insertElement(20,0);
-    tree1.insertElement(70,0);
+   tree1.insertElement(20,0);
 
     cout << "Following is Inorder traversal of tree 1 \n";
     tree1.printInOrder();
@@ -182,6 +163,8 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
     tree2.insertElement(40,0);
     tree2.insertElement(120,0);
 
+    tree2.deleteElement(120);
+
     cout << "Following is Inorder traversal of tree 2 \n";
     tree2.printInOrder();
 
@@ -190,6 +173,15 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
 
     cout << "Following is Inorder traversal of the merged tree \n";
     mergedTree.printInOrder();
+
+    mergedTree.insertElement(42);
+    mergedTree.insertElement(420);
+    mergedTree.insertElement(69);
+
+    cout << "Following is Inorder traversal of the merged tree \n";
+    mergedTree.printInOrder();
+
+
 
     return 0;
 } */
