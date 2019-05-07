@@ -45,7 +45,9 @@ public:
     }
 
     List &operator=(const List &aList) {
-
+        if(this == &aList){
+            return *this;
+        }
         while (head_m != NULL) {
             deleteNode(head_m);
         }
@@ -55,6 +57,8 @@ public:
             addLast(temp->data_m);
             temp = temp->next_m;
         } while (temp != aList.head_m);
+
+        return *this;
     }
 
     Node<T> *

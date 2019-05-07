@@ -67,8 +67,6 @@ public:
 
     void deleteElement(const T &key);
 
-    void printBalance();
-
     void printInOrder();
 
     bool searchKey(const T &key);
@@ -99,8 +97,6 @@ private:
     AVLNode<T, S> *rollRL(AVLNode<T, S> *aNode);
 
     int height(AVLNode<T, S> *aNode);
-
-    void printBalance(AVLNode<T, S> *aNode);
 
     void printInOrder(AVLNode<T, S> *aNode);
 
@@ -191,14 +187,6 @@ int AVLTree<T, S>::height(AVLNode<T, S> *aNode) {
     return aNode->height_m;
 }
 
-template<class T, class S>
-void AVLTree<T, S>::printBalance(AVLNode<T, S> *aNode) {
-    if (aNode != nullptr) {
-        printBalance(aNode->left_m);
-        std::cout << getBalance(aNode) << " ";
-        printBalance(aNode->right_m);
-    }
-}
 
 template<class T, class S>
 AVLTree<T, S>::AVLTree() : root(nullptr) {}
@@ -214,6 +202,7 @@ bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
         throw KeyAlreadyExists();
     }
     root = insertNode(root, key, value);
+    return true;
 }
 
 
@@ -224,12 +213,6 @@ void AVLTree<T, S>::deleteElement(const T &delKey) {
         throw NoSuchKey();
     }
     root = deleteNode(root, delKey);
-}
-
-
-template<class T, class S>
-void AVLTree<T, S>::printBalance() {
-    printBalance(root);
 }
 
 template<class T, class S>
@@ -455,8 +438,12 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
             if (temp == nullptr) {
                 temp = root;
                 root = nullptr;
-            } else // One child
-                *root = *temp;
+            } else{ //one child
+                root->key_m = temp->key_m;
+                root->value_m = temp->value_m;
+                root->right_m = temp->right_m
+
+            }
 
             delete (temp);
         }

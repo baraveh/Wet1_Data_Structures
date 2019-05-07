@@ -160,7 +160,7 @@ static errorType parser(const char* const command) {
             rtn_val = OnDeleteLecture(DS, command_args);
             break;
         case (CHANGECOURSEID_CMD):
-            //rtn_val = OnChangeCourseID(DS, command_args); not testing this atm since merge doesn't work
+            rtn_val = OnChangeCourseID(DS, command_args);
             break;
         case (CALCULATESCHEDULEEFFICIENCY_CMD):
             rtn_val = OnCalculateScheduleEfficiency(DS, command_args);

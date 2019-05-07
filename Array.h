@@ -11,7 +11,7 @@ class Array {
     int size_m;
 public:
 
-    Array(const int& size = 0, const T& defVal = T()){
+    Array(const int& size = 1, const T& defVal = T()){
         size_m = size;
         array_m = new T[size_m]{defVal};
     }
@@ -29,6 +29,9 @@ public:
     }
 
     Array& operator=(const Array& aArray){
+        if(this == &aArray){
+            return *this;
+        }
         T* temp = array_m;
         array_m = new T[aArray.size_m];
         delete temp;
@@ -36,6 +39,7 @@ public:
         for(int i =0; i < aArray.size_m; i++){
             array_m[i] = aArray.array_m[i];
         }
+        return *this;
     }
 
     T& operator[](const int& index){

@@ -2,7 +2,7 @@
 // Created by Bar The magical on 25/04/2019.
 //
 
-#include <cassert>
+/*#include <cassert>
 #include "List.h"
 
 int main(){
@@ -22,4 +22,4 @@ int main(){
     List3.deleteNode(potato);
     assert(List3.getSize() == 3);
 
-}
+} */

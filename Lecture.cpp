@@ -33,6 +33,7 @@ Lecture &Lecture::operator=(const Lecture &aLecture) {
     hour_m = aLecture.hour_m;
     room_m = aLecture.room_m;
     courseId_m = aLecture.courseId_m;
+    return *this;
 }
 
 Lecture::Lecture(const int &hour, const int &room, const int &courseId)

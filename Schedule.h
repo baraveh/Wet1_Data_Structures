@@ -44,7 +44,7 @@ private:
     Array<List<int>> availabilityPerHour_m;
 
     void changeLectureCourseID(AVLNode<Lecture, int> *root, int newCourseID) {
-        while (root != nullptr) {
+        if (root != nullptr) {
             changeLectureCourseID(root->left_m, newCourseID);
             root->key_m.changeCourseId(newCourseID);
             lectureArr_m[root->key_m.getHour()][root->key_m.getRoom()].courseId_m = newCourseID;
@@ -55,18 +55,19 @@ private:
 
 public:
 
-    Schedule(int hours = 0, int rooms = 0) : numOfRooms_m(rooms),
+    Schedule(int hours = 1, int rooms = 1) try : numOfRooms_m(rooms),
                                              numOfHours_m(hours),
+                                             numOfLessons_m(0),
                                              freeHours_m(hours),
                                              freeRooms_m(rooms),
-                                             numOfLessons_m(0),
-                                             roomsArr_m(rooms, 0),
-                                             hoursArr_m(hours, 0),
-                                             availabilityPerHour_m(hours),
                                              lectureArr_m(hours,
                                                           Array<arrayEntry>(
                                                                   rooms)),
-                                             courseTree_m() {
+
+                                             courseTree_m(),
+                                             roomsArr_m(rooms, 0),
+                                             hoursArr_m(hours, 0),
+                                             availabilityPerHour_m(hours){
         for (int i = 0; i < numOfHours_m; i++) {
             for (int j = 0; j < numOfRooms_m; j++) {
                 arrayEntry temp = {availabilityPerHour_m[i].addLast(j),
@@ -75,61 +76,88 @@ public:
             }
         }
     }
+    catch (std::bad_alloc& e){
+        throw MemError();
+    }
+    catch (MemError& e){
+        throw MemError();
+    }
 
-    Schedule(const Schedule &aSchedule) {
-        numOfRooms_m = aSchedule.numOfRooms_m;
-        numOfHours_m = aSchedule.numOfHours_m;
-        numOfLessons_m = aSchedule.numOfLessons_m;
-        freeRooms_m = aSchedule.freeRooms_m;
-        freeHours_m = aSchedule.freeHours_m;
-        courseTree_m = AVLTree<int, AVLTree<Lecture, int>>(
-                aSchedule.courseTree_m);
+    Schedule(const Schedule &aSchedule){
+        try {
+            numOfRooms_m = aSchedule.numOfRooms_m;
+            numOfHours_m = aSchedule.numOfHours_m;
+            numOfLessons_m = aSchedule.numOfLessons_m;
+            freeRooms_m = aSchedule.freeRooms_m;
+            freeHours_m = aSchedule.freeHours_m;
+            courseTree_m = AVLTree<int, AVLTree<Lecture, int>>(
+                    aSchedule.courseTree_m);
 
-        availabilityPerHour_m = Array<List<int>>(numOfHours_m);
-        lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m, Array<arrayEntry>(
-                numOfRooms_m));
+            availabilityPerHour_m = Array<List<int>>(numOfHours_m);
+            lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m,
+                                                    Array<arrayEntry>(
+                                                            numOfRooms_m));
 
-        for (int i = 0; i < numOfHours_m; i++) {
-            Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
-            for (int j = 0; j < numOfRooms_m; j++) {
-                arrayEntry temp = {
-                        availabilityPerHour_m[i].addLast(listIterator->data_m),
-                        aSchedule.lectureArr_m[i][j].courseId_m};
-                lectureArr_m[i][j] = temp;
-                listIterator = listIterator->next_m;
+            for (int i = 0; i < numOfHours_m; i++) {
+                Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
+                for (int j = 0; j < numOfRooms_m; j++) {
+                    arrayEntry temp = {
+                            availabilityPerHour_m[i].addLast(
+                                    listIterator->data_m),
+                            aSchedule.lectureArr_m[i][j].courseId_m};
+                    lectureArr_m[i][j] = temp;
+                    listIterator = listIterator->next_m;
+                }
             }
         }
-
+        catch (std::bad_alloc& e){
+            throw MemError();
+        }
+        catch (MemError& e){
+            throw MemError();
+        }
     }
+
 
     ~Schedule() = default;
 
     Schedule &operator=(const Schedule &aSchedule) {
+        if(this == &aSchedule){
+            return *this;
+        }
+        try {
+            numOfRooms_m = aSchedule.numOfRooms_m;
+            numOfHours_m = aSchedule.numOfHours_m;
+            numOfLessons_m = aSchedule.numOfLessons_m;
+            freeRooms_m = aSchedule.freeRooms_m;
+            freeHours_m = aSchedule.freeHours_m;
 
-        numOfRooms_m = aSchedule.numOfRooms_m;
-        numOfHours_m = aSchedule.numOfHours_m;
-        numOfLessons_m = aSchedule.numOfLessons_m;
-        freeRooms_m = aSchedule.freeRooms_m;
-        freeHours_m = aSchedule.freeHours_m;
+            courseTree_m = AVLTree<int, AVLTree<Lecture, int>>(
+                    aSchedule.courseTree_m);
 
-        courseTree_m = AVLTree<int, AVLTree<Lecture, int>>(
-                aSchedule.courseTree_m);
+            availabilityPerHour_m = Array<List<int>>(numOfHours_m);
+            lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m,
+                                                    Array<arrayEntry>(
+                                                            numOfRooms_m));
 
-        availabilityPerHour_m = Array<List<int>>(numOfHours_m);
-        lectureArr_m = Array<Array<arrayEntry>>(numOfHours_m, Array<arrayEntry>(
-                numOfRooms_m));
-
-        for (int i = 0; i < numOfHours_m; i++) {
-            Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
-            for (int j = 0; j < numOfRooms_m; j++) {
-                arrayEntry temp = {
-                        availabilityPerHour_m[i].addLast(listIterator->data_m),
-                        aSchedule.lectureArr_m[i][j].courseId_m};
-                lectureArr_m[i][j] = temp;
-                listIterator = listIterator->next_m;
+            for (int i = 0; i < numOfHours_m; i++) {
+                Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
+                for (int j = 0; j < numOfRooms_m; j++) {
+                    arrayEntry temp = {
+                            availabilityPerHour_m[i].addLast(
+                                    listIterator->data_m),
+                            aSchedule.lectureArr_m[i][j].courseId_m};
+                    lectureArr_m[i][j] = temp;
+                    listIterator = listIterator->next_m;
+                }
             }
         }
-
+        catch (std::bad_alloc& e){
+            throw MemError();
+        }
+        catch (MemError& e){
+            throw MemError();
+        }
     }
 
     ScheduleResult
@@ -216,6 +244,7 @@ public:
         availabilityPerHour_m[hour].moveNodeToStart(
                 lectureArr_m[hour][roomId].roomPtr_m);
         lectureArr_m[hour][roomId].courseId_m = NO_COURSE;
+        return SCHEDULE_SUCCESS;
 
     }
 
@@ -237,17 +266,15 @@ public:
 
         try {
 
-            AVLTree<Lecture, int> temp;
-            temp.mergeTrees(courseTree_m[oldCourse],
+            courseTree_m[newCourse].mergeTrees(courseTree_m[oldCourse],
                             courseTree_m[newCourse]);
-            changeLectureCourseID(temp.getRoot(), newCourse);
-            courseTree_m[newCourse] = AVLTree<Lecture, int>(temp);
+            changeLectureCourseID(courseTree_m[newCourse].getRoot(), newCourse);
+            courseTree_m.deleteElement(oldCourse);
         }
         catch (MemError& e){
             return SCHEDULE_MEMORY_ERROR;
         }
 
-        changeLectureCourseID(courseTree_m[newCourse].getRoot(), newCourse);
         return SCHEDULE_SUCCESS;
 
     }
@@ -259,8 +286,8 @@ public:
         if (numOfLessons_m == 0) {
             return SCHEDULE_FAILURE;
         }
-        *efficiency = (numOfLessons_m / ((numOfRooms_m) *
-                                         (numOfHours_m - freeHours_m)));
+        *efficiency = (float(numOfLessons_m) / float(((numOfRooms_m) *
+                                         (numOfHours_m - freeHours_m))));
         return SCHEDULE_SUCCESS;
     }
 
@@ -305,7 +332,7 @@ public:
         int* garbageArr = new int[*numOfLectures];
         *rooms = (int *) malloc(sizeof(int) * (*numOfLectures));
         *hours = (int *) malloc(sizeof(int) * (*numOfLectures));
-        if (!*rooms || !*hours || !lectureArr) {
+        if (!*rooms || !*hours || !lectureArr || !garbageArr) {
             return SCHEDULE_MEMORY_ERROR;
         }
 

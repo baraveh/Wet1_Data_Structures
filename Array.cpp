@@ -2,7 +2,7 @@
 // Created by Bar on 26-Apr-19.
 //
 
-#include <assert.h>
+/*#include <assert.h>
 #include "Array.h"
 
 int main(){
@@ -20,4 +20,4 @@ int main(){
     array2[0] = 2;
     array3[0] = 3;
 
-}
+} */

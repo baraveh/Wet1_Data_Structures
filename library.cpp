@@ -5,8 +5,16 @@
 #include "library.h"
 #include "Schedule.h"
 void*Init(int hours, int rooms) {
-    auto * DS = new Schedule(hours, rooms);
-    return (void*)DS;
+    if(hours <= 0 || rooms <= 0){
+        return nullptr;
+    }
+    try {
+        auto *DS = new Schedule(hours, rooms);
+        return (void*)DS;
+    }
+    catch (MemError& e){
+        return nullptr;
+    }
 }
 StatusType AddLecture(void *DS, int hour, int roomID, int courseID) {
     if(!DS){

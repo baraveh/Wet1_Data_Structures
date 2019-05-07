@@ -20,13 +20,13 @@ void testMerge(AVLTree<int,int> & mergedTree, AVLTree<int,int> &tree1, AVLTree<i
  *      printTree(int *arr, (enum)InOrder) - scan the tree inorder and put the results inside arr.
  *          if the tree is valid binary search tree then arr should return sorted.
  */
-int main() {
+/* int main() {
     srand(time(NULL)); //for random numbers in tests
 
         for (int i = 1; i < 3000; i++) {
                 testAVLTree();
         }
-}
+} */
 
 void testAVLTree(){
 
