@@ -439,10 +439,7 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
                 temp = root;
                 root = nullptr;
             } else{ //one child
-                root->key_m = temp->key_m;
-                root->value_m = temp->value_m;
-                root->right_m = temp->right_m
-
+                *root = *temp;
             }
 
             delete (temp);
