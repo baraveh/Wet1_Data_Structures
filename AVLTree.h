@@ -565,6 +565,7 @@ AVLTree<T, S> &AVLTree<T, S>::operator=(const AVLTree<T, S> &aTree) {
         throw MemError();
     }
     delete temp;
+    return *this;
 }
 
 

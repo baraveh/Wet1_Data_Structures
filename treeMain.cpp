@@ -26,7 +26,7 @@ void testMerge(AVLTree<int,int> & mergedTree, AVLTree<int,int> &tree1, AVLTree<i
         for (int i = 1; i < 3000; i++) {
                 testAVLTree();
         }
-} */
+}
 
 void testAVLTree(){
 
@@ -146,7 +146,7 @@ void testMerge(AVLTree<int, int> &mergedTree, AVLTree<int, int> &tree1,
 
 
 
-/* int main()
+ int main()
 {
 
     AVLTree<int, int> tree1;
