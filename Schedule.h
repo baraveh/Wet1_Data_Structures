@@ -166,7 +166,7 @@ public:
             hour >= numOfHours_m) {
             return SCHEDULE_INVALID_INPUT;
         }
-        if (lectureArr_m[room][hour].courseId_m != NO_COURSE) {
+        if (lectureArr_m[hour][room].courseId_m != NO_COURSE) {
             return SCHEDULE_FAILURE;
         }
 
@@ -207,11 +207,11 @@ public:
             hour >= numOfHours_m) {
             return SCHEDULE_INVALID_INPUT;
         }
-        if (lectureArr_m[room][hour].courseId_m == NO_COURSE) {
+        if (lectureArr_m[hour][room].courseId_m == NO_COURSE) {
             return SCHEDULE_FAILURE;
         }
 
-        *courseId = lectureArr_m[room][hour].courseId_m;
+        *courseId = lectureArr_m[hour][room].courseId_m;
         return SCHEDULE_SUCCESS;
     }
 
@@ -220,12 +220,12 @@ public:
             hour >= numOfHours_m) {
             return SCHEDULE_INVALID_INPUT;
         }
-        if (lectureArr_m[roomId][hour].courseId_m == NO_COURSE) {
+        if (lectureArr_m[hour][roomId].courseId_m == NO_COURSE) {
             return SCHEDULE_FAILURE;
 
         }
 
-        int courseId = lectureArr_m[roomId][hour].courseId_m;
+        int courseId = lectureArr_m[hour][roomId].courseId_m;
         Lecture key = Lecture(hour, roomId, courseId);
         courseTree_m[courseId].deleteElement(key);
 
@@ -244,6 +244,9 @@ public:
         availabilityPerHour_m[hour].moveNodeToStart(
                 lectureArr_m[hour][roomId].roomPtr_m);
         lectureArr_m[hour][roomId].courseId_m = NO_COURSE;
+        if(courseTree_m[courseId].getRoot() == nullptr){
+            courseTree_m.deleteElement(courseId);
+        }
         return SCHEDULE_SUCCESS;
 
     }
@@ -298,7 +301,11 @@ public:
             return SCHEDULE_INVALID_INPUT;
         }
 
-        *numOfRooms = numOfRooms_m - hoursArr_m[hour];
+        int res = numOfRooms_m - hoursArr_m[hour];
+        if(res == 0){
+            return SCHEDULE_FAILURE;
+        }
+        *numOfRooms = res;
         int *freeRooms = (int *) malloc(sizeof(*freeRooms) * (*numOfRooms));
         if (!freeRooms) {
             return SCHEDULE_MEMORY_ERROR;
@@ -329,7 +336,7 @@ public:
 
         Lecture *lectureArr = (Lecture *) malloc(
                 sizeof(*lectureArr) * (*numOfLectures));
-        int* garbageArr = new int[*numOfLectures];
+        int* garbageArr = (int*)malloc(sizeof(int)*(*numOfLectures));
         *rooms = (int *) malloc(sizeof(int) * (*numOfLectures));
         *hours = (int *) malloc(sizeof(int) * (*numOfLectures));
         if (!*rooms || !*hours || !lectureArr || !garbageArr) {
