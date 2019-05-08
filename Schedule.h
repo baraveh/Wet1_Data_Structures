@@ -68,8 +68,8 @@ public:
                                              roomsArr_m(rooms, 0),
                                              hoursArr_m(hours, 0),
                                              availabilityPerHour_m(hours){
-        for (int i = 0; i < numOfHours_m; i++) {
-            for (int j = 0; j < numOfRooms_m; j++) {
+        for (int i = 0; i < hours; i++) {
+            for (int j = 0; j < rooms; j++) {
                 arrayEntry temp = {availabilityPerHour_m[i].addLast(j),
                                    NO_COURSE};
                 lectureArr_m[i][j] = temp;

@@ -36,25 +36,12 @@ public:
         delete left_m;
         delete right_m;
     }
-
-    T &getKey() {
-        return key_m;
-    }
-
-    S &getValue() {
-        return value_m;
-    }
-
-    void setHeight(int height) {
-        height_m = height;
-    }
-
 };
 
 template<typename T, typename S>
 static AVLNode<T, S> *
 mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
-                  int arr1Size, int arr2Size, int *mergedArrSize);
+                  int arr1Size, int arr2Size, int *mergedSize);
 
 template<class T, class S>
 class AVLTree {
@@ -62,6 +49,10 @@ public:
     AVLTree();
 
     ~AVLTree();
+
+    AVLTree(const AVLTree &aTree);
+
+    AVLTree &operator=(const AVLTree &aTree);
 
     bool insertElement(const T &key, const S &value = S());
 
@@ -92,10 +83,6 @@ private:
 
     AVLNode<T, S> *rollRR(AVLNode<T, S> *aNode);
 
-    AVLNode<T, S> *rollLR(AVLNode<T, S> *aNode);
-
-    AVLNode<T, S> *rollRL(AVLNode<T, S> *aNode);
-
     int height(AVLNode<T, S> *aNode);
 
     void printInOrder(AVLNode<T, S> *aNode);
@@ -108,17 +95,16 @@ private:
     bool checkIfBalanced(AVLNode<T, S> *aNode);
 
     AVLNode<T, S> *
-    mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
-               AVLNode<T, S> *parent);
+    mergeTrees(AVLNode<T, S> *nodeArr, int start, int end);
 
     AVLNode<T, S> *deleteNode(AVLNode<T, S> *root, const T &keyToDelete);
 
-    AVLNode<T,S>* insertNode(AVLNode<T,S>* root, const T& key, const S& value);
+    AVLNode<T, S> *
+    insertNode(AVLNode<T, S> *root, const T &key, const S &value);
 
     AVLNode<T, S> *minValueNode(AVLNode<T, S> *);
 
-    int getBalance(AVLNode<T,S>* N)
-    {
+    int getBalance(AVLNode<T, S> *N) {
         if (N == NULL)
             return 0;
         return height(N->left_m) -
@@ -140,9 +126,9 @@ AVLNode<T, S> *AVLTree<T, S>::rollLL(AVLNode<T, S> *aNode) {
 
     // Update heights
     aNode->height_m = std::max(height(aNode->left_m),
-                          height(aNode->right_m)) + 1;
+                               height(aNode->right_m)) + 1;
     y->height_m = std::max(height(y->left_m),
-                      height(y->right_m)) + 1;
+                           height(y->right_m)) + 1;
 
     // Return new root
     return y;
@@ -168,18 +154,6 @@ AVLNode<T, S> *AVLTree<T, S>::rollRR(AVLNode<T, S> *aNode) {
 }
 
 template<class T, class S>
-AVLNode<T, S> *AVLTree<T, S>::rollLR(AVLNode<T, S> *aNode) {
-    aNode->left_m = rollLL(aNode->left_m);
-    return rollRR(aNode);
-}
-
-template<class T, class S>
-AVLNode<T, S> *AVLTree<T, S>::rollRL(AVLNode<T, S> *aNode) {
-    aNode->right_m = rollRR(aNode->right_m);
-    return rollLL(aNode);
-}
-
-template<class T, class S>
 int AVLTree<T, S>::height(AVLNode<T, S> *aNode) {
     if (aNode == nullptr) {
         return 0;
@@ -198,13 +172,12 @@ AVLTree<T, S>::~AVLTree() {
 
 template<class T, class S>
 bool AVLTree<T, S>::insertElement(const T &key, const S &value) {
-    if(searchKey(key)){
+    if (searchKey(key)) {
         throw KeyAlreadyExists();
     }
     root = insertNode(root, key, value);
     return true;
 }
-
 
 
 template<class T, class S>
@@ -271,7 +244,7 @@ int AVLTree<T, S>::countNodesInTree() const {
 template<class T, class S>
 int AVLTree<T, S>::countNodes(const AVLNode<T, S> *aNode) const {
     int count = 0;
-    if (aNode != nullptr && aNode != NULL) {
+    if (aNode != nullptr) {
         count += countNodes(aNode->left_m);
         count++;
         count += countNodes(aNode->right_m);
@@ -336,7 +309,7 @@ AVLTree<T, S>::mergeTrees(const AVLTree<T, S> &treeA, const AVLTree &treeB) {
         delete[] treeBVals;
 
         AVLNode<T, S> *temp = root;
-        AVLNode<T, S> *res = mergeTrees(nodeArr, 0, (nodeArrSize) - 1, nullptr);
+        AVLNode<T, S> *res = mergeTrees(nodeArr, 0, (nodeArrSize) - 1);
         root = res;
 
         delete[] nodeArr;
@@ -358,8 +331,7 @@ AVLNode<T, S> *AVLTree<T, S>::getRoot() {
 
 template<class T, class S>
 AVLNode<T, S> *
-AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
-                          AVLNode<T, S> *parent) {
+AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end) {
     if (!nodeArr) {
         throw MemError();
     }
@@ -369,11 +341,11 @@ AVLTree<T, S>::mergeTrees(AVLNode<T, S> *nodeArr, int start, int end,
     int mid = (start + end) / 2;
     T key = nodeArr[mid].key_m;
     S value = nodeArr[mid].value_m;
-    AVLNode<T, S> *aNode = new AVLNode<T, S>(key, value);
-    aNode->left_m = mergeTrees(nodeArr, start, mid - 1, aNode);
-    aNode->right_m = mergeTrees(nodeArr, mid + 1, end, aNode);
+    auto aNode = new AVLNode<T, S>(key, value);
+    aNode->left_m = mergeTrees(nodeArr, start, mid - 1);
+    aNode->right_m = mergeTrees(nodeArr, mid + 1, end);
     aNode->height_m = std::max(height(aNode->left_m),
-                          height(aNode->right_m)) + 1;
+                               height(aNode->right_m)) + 1;
     return aNode;
 }
 
@@ -438,13 +410,15 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
             if (temp == nullptr) {
                 temp = root;
                 root = nullptr;
-            } else{ //one child
-                *root = *temp;
+            } else { //one child
+                root->key_m = temp->key_m;
+                root->value_m = temp->value_m;
+                root->left_m = temp->left_m;
+                root->right_m = temp->right_m;
             }
 
             delete (temp);
-        }
-        else {
+        } else {
             // node with two children: Get the inorder
             // successor (smallest in the right subtree)
             AVLNode<T, S> *temp = minValueNode(root->right_m);
@@ -461,12 +435,12 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
     }
 
-    if(root == nullptr){
+    if (root == nullptr) {
         return root;
     }
 
     root->height_m = 1 + std::max(height(root->left_m),
-                           height(root->right_m));
+                                  height(root->right_m));
     int balance = getBalance(root);
 
     if (balance > 1 &&
@@ -475,8 +449,7 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
     // Left Right Case
     if (balance > 1 &&
-        getBalance(root->left_m) < 0)
-    {
+        getBalance(root->left_m) < 0) {
         root->left_m = rollLL(root->left_m);
         return rollRR(root);
     }
@@ -488,8 +461,7 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
     // Right Left Case
     if (balance < -1 &&
-        getBalance(root->right_m) > 0)
-    {
+        getBalance(root->right_m) > 0) {
         root->right_m = rollRR(root->right_m);
         return rollLL(root);
     }
@@ -500,12 +472,12 @@ AVLTree<T, S>::deleteNode(AVLNode<T, S> *root, const T &keyToDelete) {
 
 template<class T, class S>
 AVLNode<T, S> *
-AVLTree<T, S>::insertNode(AVLNode<T, S>* root, const T &key, const S &value) {
+AVLTree<T, S>::insertNode(AVLNode<T, S> *root, const T &key, const S &value) {
     /* 1. Perform the normal BST rotation */
     if (root == NULL)
-        return new AVLNode<T,S>(key, value);
+        return new AVLNode<T, S>(key, value);
 
-    if (key <root->key_m)
+    if (key < root->key_m)
         root->left_m = insertNode(root->left_m, key, value);
     else if (key > root->key_m)
         root->right_m = insertNode(root->right_m, key, value);
@@ -514,7 +486,7 @@ AVLTree<T, S>::insertNode(AVLNode<T, S>* root, const T &key, const S &value) {
 
     /* 2. Update height of this ancestor node */
     root->height_m = 1 + std::max(height(root->left_m),
-                           height(root->right_m));
+                                  height(root->right_m));
 
     /* 3. Get the balance factor of this
         ancestor node to check whether
@@ -533,21 +505,66 @@ AVLTree<T, S>::insertNode(AVLNode<T, S>* root, const T &key, const S &value) {
         return rollLL(root);
 
     // Left Right Case
-    if (balance > 1 && key > root->left_m->key_m)
-    {
+    if (balance > 1 && key > root->left_m->key_m) {
         root->left_m = rollLL(root->left_m);
         return rollRR(root);
     }
 
     // Right Left Case
-    if (balance < -1 && key < root->right_m->key_m)
-    {
+    if (balance < -1 && key < root->right_m->key_m) {
         root->right_m = rollRR(root->right_m);
         return rollLL(root);
     }
 
     /* return the (unchanged) node pointer */
     return root;
+}
+
+template<class T, class S>
+AVLTree<T, S>::AVLTree(const AVLTree<T, S> &aTree) {
+    try {
+            T *keysArr = new T[aTree.countNodesInTree()];
+            S *valuesArr = new S[aTree.countNodesInTree()];
+            auto nodeArr = new AVLNode<T, S>[aTree.countNodesInTree()];
+            aTree.printTree(keysArr, valuesArr);
+            for (int i = 0; i < aTree.countNodesInTree(); i++) {
+                nodeArr[i].key_m = keysArr[i];
+                nodeArr[i].value_m = valuesArr[i];
+            }
+            delete[] keysArr;
+            delete[] valuesArr;
+            root = mergeTrees(nodeArr, 0, aTree.countNodesInTree() - 1);
+            delete[] nodeArr;
+        }
+    catch (std::bad_alloc &e) {
+        throw MemError();
+    }
+}
+
+template<class T, class S>
+AVLTree<T, S> &AVLTree<T, S>::operator=(const AVLTree<T, S> &aTree) {
+    AVLNode<T, S> *temp = root;
+    if(this == &aTree){
+        return *this;
+    }
+    try {
+            T *keysArr = new T[aTree.countNodesInTree()];
+            S *valuesArr = new S[aTree.countNodesInTree()];
+            auto nodeArr = new AVLNode<T, S>[aTree.countNodesInTree()];
+            aTree.printTree(keysArr, valuesArr);
+            for (int i = 0; i < aTree.countNodesInTree(); i++) {
+                nodeArr[i].key_m = keysArr[i];
+                nodeArr[i].value_m = valuesArr[i];
+            }
+            delete[] keysArr;
+            delete[] valuesArr;
+            root = mergeTrees(nodeArr, 0, aTree.countNodesInTree() - 1);
+            delete[] nodeArr;
+        }
+    catch (std::bad_alloc &e) {
+        throw MemError();
+    }
+    delete temp;
 }
 
 
@@ -558,7 +575,7 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
     if (!arr1Keys || !arr2Keys || !arr1Values || !arr2Values || !mergedSize) {
         throw MemError();
     }
-    AVLNode<T, S> *mergedArr = new AVLNode<T, S>[arr1Size + arr2Size];
+    auto mergedArr = new AVLNode<T, S>[arr1Size + arr2Size];
     int i = 0, j = 0, k = 0;
     while (i < arr1Size && j < arr2Size) {
         if (arr1Keys[i] <= arr2Keys[j]) {
@@ -593,15 +610,5 @@ mergeSortedArrays(T *arr1Keys, S *arr1Values, T *arr2Keys, S *arr2Values,
     return mergedArr;
 }
 
-
-template<typename T, typename S>
-static bool isSorted(AVLNode<T, S> *arr, int size) {
-    for (int i = 1; i < size; i++) {
-        if (arr[i].key_m < arr[i - 1].key_m) {
-            return false;
-        }
-    }
-    return true;
-}
 
 #endif //WET1_DATA_STRUCTURES_AVLTree_H

@@ -48,8 +48,12 @@ public:
         if(this == &aList){
             return *this;
         }
-        while (head_m != NULL) {
+        while (head_m != nullptr) {
             deleteNode(head_m);
+        }
+
+        if(aList.head_m == nullptr){
+            return *this;
         }
 
         Node<T> *temp = aList.head_m;

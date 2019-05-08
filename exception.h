@@ -25,5 +25,11 @@ class MemError : public std::exception{
     }
 };
 
+class IllegalIndex : public std::exception{
+    virtual const char* what() const throw(){
+        return "Illegal Index";
+    }
+};
+
 
 #endif //WET1_DATA_STRUCTURES_EXCEPTION_H

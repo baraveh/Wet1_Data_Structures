@@ -2,7 +2,7 @@
 // Created by Bar The magical on 20/04/2019.
 //
 
-#include "Schedule.h"
+/*#include "Schedule.h"
 
 int main(){
     ScheduleResult res;
@@ -33,4 +33,16 @@ int main(){
     int numOfLectures;
     res = s1.getAllLecturesByCourse(234219, &hoursLectures, &roomsLectures, &numOfLectures);
     assert(res == SCHEDULE_SUCCESS);
-}
+    assert(hoursLectures[0] == 0);
+    assert(hoursLectures[1] == 1);
+    assert(roomsLectures[0] == 0);
+    assert(roomsLectures[1] == 1);
+    assert(numOfLectures == 2);
+    free(hoursLectures);
+    free(roomsLectures);
+    res = s1.deleteLecture(0,0);
+    assert(res == SCHEDULE_SUCCESS);
+    float efficiency2 = 0;
+    res = s1.calculateScheduleEfficiency(&efficiency2);
+    assert(res == SCHEDULE_SUCCESS && efficiency2 == 0.5);
+} */

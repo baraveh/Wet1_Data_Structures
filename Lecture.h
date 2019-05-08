@@ -13,7 +13,11 @@ class Lecture {
 
 public:
     Lecture(const int& hour= 0, const int& room = 0, const int& courseId = -1);
-    Lecture(const Lecture& aLesson) = default;
+    Lecture(const Lecture& aLesson){
+        hour_m = aLesson.hour_m;
+        room_m = aLesson.room_m;
+        courseId_m = aLesson.courseId_m;
+    }
     ~Lecture() = default;
 
     Lecture& operator=(const Lecture& aLesson);
