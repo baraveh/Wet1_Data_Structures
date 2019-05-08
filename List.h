@@ -69,10 +69,10 @@ public:
     addLast(const T &value) { //adds node to the end, returns a pointer to it;
         auto *temp = new Node<T>;
         temp->data_m = value;
-        temp->next_m = NULL;
-        temp->prev_m = NULL;
+        temp->next_m = nullptr;
+        temp->prev_m = nullptr;
 
-        if (head_m == NULL) {
+        if (head_m == nullptr) {
             head_m = temp;
             tail_m = temp;
             head_m->prev_m = tail_m;
