@@ -69,7 +69,10 @@ GetAllLecturesByCourse(void *DS, int courseID, int **hours, int **rooms,
 }
 
 void Quit(void **DS) {
-    DS = nullptr;
+    if(!DS){
+        return;
+    }
+    *DS = nullptr;
 }
 
 
