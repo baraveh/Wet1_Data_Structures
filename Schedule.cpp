@@ -5,8 +5,8 @@
 #include "Schedule.h"
 #include "List.h"
 
-int main(){
-    /*ScheduleResult res;
+/*int main(){
+    ScheduleResult res;
     Schedule s1 = Schedule(2,2);
     res =s1.addLecture(0,0, 234218);
     assert(res == SCHEDULE_SUCCESS);
@@ -57,5 +57,5 @@ int main(){
     l1.moveNodeToStart(n1);
     l1.moveNodeToEnd(n2);
     l1.moveNodeToStart(n3);
-    l1.deleteNode(n1); */
-}
+    l1.deleteNode(n1);
+} */
