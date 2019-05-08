@@ -6,31 +6,39 @@
 #define WET1_DATA_STRUCTURES_LIST_H
 
 #include <stdlib.h>
+#include <cassert>
 
 template<typename T>
-struct Node {
+class Node {
+public:
     T data_m;
     Node *next_m;
     Node *prev_m;
+
+    Node(const T& data = T(), Node* prev = nullptr, Node* next = nullptr) : data_m(data), next_m(next), prev_m(prev){}
+    ~Node(){
+        if(next_m != nullptr){
+            Node* temp = next_m;
+            next_m = nullptr;
+            delete temp;
+        }
+    }
 };
 
 template<typename T>
 class List {
     Node<T> *head_m;
-    Node<T> *tail_m;
     int size_m;
 
 public:
 
     List() {
         head_m = nullptr;
-        tail_m = nullptr;
         size_m = 0;
     }
 
     List(const List &aList) {
         head_m = nullptr;
-        tail_m = nullptr;
         size_m = 0;
         Node<T> *temp = aList.head_m;
         while (size_m != aList.size_m) {
@@ -67,43 +75,63 @@ public:
 
     Node<T> *
     addLast(const T &value) { //adds node to the end, returns a pointer to it;
-        auto *temp = new Node<T>;
-        temp->data_m = value;
-        temp->next_m = nullptr;
-        temp->prev_m = nullptr;
+        auto *temp = new Node<T>(value);
 
         if (head_m == nullptr) {
+            assert(size_m == 0);
             head_m = temp;
-            tail_m = temp;
-            head_m->prev_m = tail_m;
-            head_m->next_m = tail_m;
-            tail_m->prev_m = head_m;
-            tail_m->next_m = head_m;
-        } else {
-            tail_m->next_m = temp;
+        }
+        else if(size_m == 1){
+            head_m->next_m = temp;
             head_m->prev_m = temp;
-            temp->prev_m = tail_m;
             temp->next_m = head_m;
-            tail_m = temp;
+            temp->prev_m = head_m;
+        }
+        else {
+            Node<T>* tail = head_m->prev_m;
+            assert(tail != nullptr);
+            tail->next_m = temp;
+            head_m->prev_m = temp;
+            temp->prev_m = tail;
+            temp->next_m = head_m;
         }
         size_m++;
         return temp;
     }
 
 
-    void deleteNode(const Node<T> *node) { //deletes a given node in the list
-        if (node != nullptr && size_m > 0) {
-            if (node == head_m) {
-                head_m = node->next_m;
-            }
-            if (node == tail_m) {
-                tail_m = node->prev_m;
-            }
-            node->prev_m->next_m = node->next_m;
-            node->next_m->prev_m = node->prev_m;
+    void deleteNode(Node<T>* node) { //deletes a given node in the list
+        assert(size_m != 0);
+        Node<T>* next = node->next_m;
+        Node<T>* prev = node->prev_m;
+        node->next_m = nullptr;
+        node->prev_m = nullptr;
+
+        if(size_m == 1){
+            delete node;
+            head_m = nullptr;
+            size_m--;
+            return;
+        }
+        if(size_m == 2){
+            assert(prev == next);
+            head_m = next;
+            head_m->next_m = nullptr;
+            head_m->prev_m = nullptr;
             delete node;
             size_m--;
+            return;
         }
+
+        assert(prev != nullptr && next != nullptr);
+        prev->next_m = next;
+        next->prev_m = prev;
+        if(node == head_m){
+            head_m = next;
+        }
+
+        delete node;
+        size_m--;
     }
 
     void appendList(const List &aList) {
@@ -121,35 +149,46 @@ public:
     }
 
     void moveNodeToEnd(Node<T> *node) {
-        if (node == head_m) {
+        if(size_m == 1){
+            return;
+        }
+        if(node == head_m){
             head_m = node->next_m;
+            return;
         }
-        if (node == tail_m) {
-            tail_m = node->prev_m;
+        if(size_m == 2){
+            //node is not head and there is only one other node
+            return;
         }
+
         node->prev_m->next_m = node->next_m;
         node->next_m->prev_m = node->prev_m;
 
-        tail_m->next_m = node;
+        Node<T>* tail = head_m->prev_m;
+        tail->next_m = node;
+        node->prev_m = tail;
+        node->next_m = head_m;
         head_m->prev_m = node;
-        tail_m = node;
-        head_m = node->next_m;
     }
 
     void moveNodeToStart(Node<T> *node) {
-        if (node == head_m) {
-            head_m = node->next_m;
+        if(size_m == 1 || head_m == node){
+            return;
         }
-        if (node == tail_m) {
-            tail_m = node->prev_m;
+        if(size_m == 2){
+            head_m = node;
+            return;
         }
+
         node->prev_m->next_m = node->next_m;
         node->next_m->prev_m = node->prev_m;
 
-        tail_m->next_m = node;
+        Node<T>* tail = head_m->prev_m;
+        tail->next_m = node;
+        node->prev_m = tail;
+        node->next_m = head_m;
         head_m->prev_m = node;
         head_m = node;
-        tail_m = node->prev_m;
     }
 
     int &getSize() {
@@ -164,13 +203,6 @@ public:
         return head_m;
     }
 
-    Node<T> *getTail() const {
-        return tail_m;
-    }
-
-    Node<T> *getTail() {
-        return tail_m;
-    }
 };
 
 

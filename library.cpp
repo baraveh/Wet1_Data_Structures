@@ -72,7 +72,12 @@ void Quit(void **DS) {
     if(!DS){
         return;
     }
-    *DS = nullptr;
+
+    if((*DS) != nullptr) {
+        auto temp = (Schedule *) *DS;
+        *DS = nullptr;
+        delete temp;
+    }
 }
 
 

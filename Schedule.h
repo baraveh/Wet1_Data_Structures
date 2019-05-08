@@ -25,12 +25,17 @@ private:
 
     class arrayEntry {
     public:
-        Node<int>* roomPtr_m;
+        Node<int> *roomPtr_m;
         int courseId_m;
-        arrayEntry(Node<int>* ptr = nullptr, int courseId = NO_COURSE) : roomPtr_m(ptr) , courseId_m(courseId){}
+
+        arrayEntry(Node<int> *ptr = nullptr, int courseId = NO_COURSE)
+                : roomPtr_m(ptr), courseId_m(courseId) {}
+
         ~arrayEntry() = default;
-        arrayEntry(const arrayEntry& anEntry) = default;
-        arrayEntry& operator= (const arrayEntry& anEntry) = default;
+
+        arrayEntry(const arrayEntry &anEntry) = default;
+
+        arrayEntry &operator=(const arrayEntry &anEntry) = default;
     };
 
     int numOfRooms_m;
@@ -61,34 +66,35 @@ private:
 public:
 
     Schedule(int hours = 1, int rooms = 1) try : numOfRooms_m(rooms),
-                                             numOfHours_m(hours),
-                                             numOfLessons_m(0),
-                                             freeHours_m(hours),
-                                             freeRooms_m(rooms),
-                                             lectureArr_m(hours,
-                                                          Array<arrayEntry>(
-                                                                  rooms)),
+                                                 numOfHours_m(hours),
+                                                 numOfLessons_m(0),
+                                                 freeHours_m(hours),
+                                                 freeRooms_m(rooms),
+                                                 lectureArr_m(hours,
+                                                              Array<arrayEntry>(
+                                                                      rooms)),
 
-                                             courseTree_m(),
-                                             roomsArr_m(rooms, 0),
-                                             hoursArr_m(hours, 0),
-                                             availabilityPerHour_m(hours){
+                                                 courseTree_m(),
+                                                 roomsArr_m(rooms, 0),
+                                                 hoursArr_m(hours, 0),
+                                                 availabilityPerHour_m(hours) {
         for (int i = 0; i < hours; i++) {
             for (int j = 0; j < rooms; j++) {
-                arrayEntry temp = arrayEntry(availabilityPerHour_m[i].addLast(j),
-                                   NO_COURSE);
+                arrayEntry temp = arrayEntry(
+                        availabilityPerHour_m[i].addLast(j),
+                        NO_COURSE);
                 lectureArr_m[i][j] = temp;
             }
         }
     }
-    catch (std::bad_alloc& e){
+    catch (std::bad_alloc &e) {
         throw MemError();
     }
-    catch (MemError& e){
+    catch (MemError &e) {
         throw MemError();
     }
 
-    Schedule(const Schedule &aSchedule){
+    Schedule(const Schedule &aSchedule) {
         try {
             numOfRooms_m = aSchedule.numOfRooms_m;
             numOfHours_m = aSchedule.numOfHours_m;
@@ -115,10 +121,10 @@ public:
                 }
             }
         }
-        catch (std::bad_alloc& e){
+        catch (std::bad_alloc &e) {
             throw MemError();
         }
-        catch (MemError& e){
+        catch (MemError &e) {
             throw MemError();
         }
     }
@@ -127,7 +133,7 @@ public:
     ~Schedule() = default;
 
     Schedule &operator=(const Schedule &aSchedule) {
-        if(this == &aSchedule){
+        if (this == &aSchedule) {
             return *this;
         }
         try {
@@ -157,10 +163,10 @@ public:
                 }
             }
         }
-        catch (std::bad_alloc& e){
+        catch (std::bad_alloc &e) {
             throw MemError();
         }
-        catch (MemError& e){
+        catch (MemError &e) {
             throw MemError();
         }
     }
@@ -249,7 +255,7 @@ public:
         availabilityPerHour_m[hour].moveNodeToStart(
                 lectureArr_m[hour][roomId].roomPtr_m);
         lectureArr_m[hour][roomId].courseId_m = NO_COURSE;
-        if(courseTree_m[courseId].getRoot() == nullptr){
+        if (courseTree_m[courseId].getRoot() == nullptr) {
             courseTree_m.deleteElement(courseId);
         }
         return SCHEDULE_SUCCESS;
@@ -275,11 +281,11 @@ public:
         try {
 
             courseTree_m[newCourse].mergeTrees(courseTree_m[oldCourse],
-                            courseTree_m[newCourse]);
+                                               courseTree_m[newCourse]);
             changeLectureCourseID(courseTree_m[newCourse].getRoot(), newCourse);
             courseTree_m.deleteElement(oldCourse);
         }
-        catch (MemError& e){
+        catch (MemError &e) {
             return SCHEDULE_MEMORY_ERROR;
         }
 
@@ -295,7 +301,8 @@ public:
             return SCHEDULE_FAILURE;
         }
         *efficiency = (float(numOfLessons_m) / float(((numOfRooms_m) *
-                                         (numOfHours_m - freeHours_m))));
+                                                      (numOfHours_m -
+                                                       freeHours_m))));
         return SCHEDULE_SUCCESS;
     }
 
@@ -307,7 +314,7 @@ public:
         }
 
         int res = numOfRooms_m - hoursArr_m[hour];
-        if(res == 0){
+        if (res == 0) {
             return SCHEDULE_FAILURE;
         }
         *numOfRooms = res;
@@ -341,7 +348,7 @@ public:
 
         Lecture *lectureArr = (Lecture *) malloc(
                 sizeof(*lectureArr) * (*numOfLectures));
-        int* garbageArr = (int*)malloc(sizeof(int)*(*numOfLectures));
+        int *garbageArr = (int *) malloc(sizeof(int) * (*numOfLectures));
         *rooms = (int *) malloc(sizeof(int) * (*numOfLectures));
         *hours = (int *) malloc(sizeof(int) * (*numOfLectures));
         if (!*rooms || !*hours || !lectureArr || !garbageArr) {

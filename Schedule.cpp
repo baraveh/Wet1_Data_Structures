@@ -2,10 +2,11 @@
 // Created by Bar The magical on 20/04/2019.
 //
 
-/*#include "Schedule.h"
+#include "Schedule.h"
+#include "List.h"
 
 int main(){
-    ScheduleResult res;
+    /*ScheduleResult res;
     Schedule s1 = Schedule(2,2);
     res =s1.addLecture(0,0, 234218);
     assert(res == SCHEDULE_SUCCESS);
@@ -24,7 +25,7 @@ int main(){
     res = s1.getAllFreeRoomsByHour(1, &rooms, &numOfRooms);
     assert(res == SCHEDULE_SUCCESS);
     assert(numOfRooms == 1);
-    assert(room[0] == 0);
+    assert(rooms[0] == 0);
     res = s1.changeCourseId(234218, 234219);
     free(rooms);
     assert(res == SCHEDULE_SUCCESS);
@@ -44,5 +45,17 @@ int main(){
     assert(res == SCHEDULE_SUCCESS);
     float efficiency2 = 0;
     res = s1.calculateScheduleEfficiency(&efficiency2);
-    assert(res == SCHEDULE_SUCCESS && efficiency2 == 0.5);
-} */
+    assert(res == SCHEDULE_SUCCESS && efficiency2 == 0.5); */
+
+    /* List<int> l1 = List<int>();
+    Node<int>* n1 = l1.addLast(1);
+    Node<int>* n2 = l1.addLast(2);
+    Node<int>* n3 = l1.addLast(3);
+    l1.addLast(4);
+    l1.addLast(5);
+    l1.moveNodeToEnd(n1);
+    l1.moveNodeToStart(n1);
+    l1.moveNodeToEnd(n2);
+    l1.moveNodeToStart(n3);
+    l1.deleteNode(n1); */
+}
