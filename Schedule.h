@@ -23,9 +23,14 @@ typedef enum {
 class Schedule {
 private:
 
-    struct arrayEntry {
-        Node<int> *roomPtr_m;
+    class arrayEntry {
+    public:
+        Node<int>* roomPtr_m;
         int courseId_m;
+        arrayEntry(Node<int>* ptr = nullptr, int courseId = NO_COURSE) : roomPtr_m(ptr) , courseId_m(courseId){}
+        ~arrayEntry() = default;
+        arrayEntry(const arrayEntry& anEntry) = default;
+        arrayEntry& operator= (const arrayEntry& anEntry) = default;
     };
 
     int numOfRooms_m;
@@ -70,8 +75,8 @@ public:
                                              availabilityPerHour_m(hours){
         for (int i = 0; i < hours; i++) {
             for (int j = 0; j < rooms; j++) {
-                arrayEntry temp = {availabilityPerHour_m[i].addLast(j),
-                                   NO_COURSE};
+                arrayEntry temp = arrayEntry(availabilityPerHour_m[i].addLast(j),
+                                   NO_COURSE);
                 lectureArr_m[i][j] = temp;
             }
         }
@@ -101,10 +106,10 @@ public:
             for (int i = 0; i < numOfHours_m; i++) {
                 Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
                 for (int j = 0; j < numOfRooms_m; j++) {
-                    arrayEntry temp = {
+                    arrayEntry temp = arrayEntry(
                             availabilityPerHour_m[i].addLast(
                                     listIterator->data_m),
-                            aSchedule.lectureArr_m[i][j].courseId_m};
+                            aSchedule.lectureArr_m[i][j].courseId_m);
                     lectureArr_m[i][j] = temp;
                     listIterator = listIterator->next_m;
                 }
@@ -143,10 +148,10 @@ public:
             for (int i = 0; i < numOfHours_m; i++) {
                 Node<int> *listIterator = aSchedule.availabilityPerHour_m[i].getHead();
                 for (int j = 0; j < numOfRooms_m; j++) {
-                    arrayEntry temp = {
+                    arrayEntry temp = arrayEntry(
                             availabilityPerHour_m[i].addLast(
                                     listIterator->data_m),
-                            aSchedule.lectureArr_m[i][j].courseId_m};
+                            aSchedule.lectureArr_m[i][j].courseId_m);
                     lectureArr_m[i][j] = temp;
                     listIterator = listIterator->next_m;
                 }
@@ -344,7 +349,7 @@ public:
         }
 
         courseTree_m[courseId].printTree(lectureArr, garbageArr);
-        delete [] garbageArr;
+        free(garbageArr);
         for (int i = 0; i < *numOfLectures; i++) {
             (*rooms)[i] = lectureArr[i].getRoom();
             (*hours)[i] = lectureArr[i].getHour();
